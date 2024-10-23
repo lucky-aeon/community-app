@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lucky_community/widgets/agreement_checkbox.dart';
+import 'package:lucky_community/widgets/rounded_text_field.dart';
+import 'package:lottie/lottie.dart';
+import 'package:lucky_community/widgets/verification_code_input.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -19,48 +23,29 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Lucky Community'),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(25.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // 账号输入框
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
+            Container(
+              child:    Lottie.asset("assets/lottie/hello.json", height: 250),
             ),
+            RoundedTextField(label: 'Username', controller: _usernameController),
             const SizedBox(height: 16),
             // 密码输入框
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Password'),
-            ),
+            RoundedTextField(
+              label: 'Password', 
+              controller: _passwordController, 
+              obscureText: true),
             const SizedBox(height: 16),
             // 验证码输入框
-            TextField(
-              controller: _captchaController,
-              decoration: const InputDecoration(labelText: 'Captcha'),
-            ),
+            VerificationCodeInput(controller: _captchaController),
             const SizedBox(height: 16),
             // 协议同意复选框
-            Row(
-              children: [
-                Checkbox(
-                  value: _agreeToTerms,
-                  onChanged: (value) {
-                    setState(() {
-                      _agreeToTerms = value ?? false;
-                    });
-                  },
-                ),
-                const Expanded(
-                  child: Text('I agree to the terms and conditions'),
-                ),
-              ],
-            ),
+            AgreementCheckbox(),
             const SizedBox(height: 16),
             // 登录按钮
             ElevatedButton(
