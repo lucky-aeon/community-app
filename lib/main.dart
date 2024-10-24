@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/layout/hello.dart';
+import 'package:lucky_community/provider/user.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
+      child: const MainApp(),
+    ));
 }
 
 class MainApp extends StatelessWidget {
