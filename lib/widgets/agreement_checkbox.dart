@@ -4,12 +4,20 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 class AgreementCheckbox extends StatefulWidget {
+  final bool isAgreed; // 从父组件接收的状态
+  final Function(bool) onAgreementChanged; // 状态变化的回调函数
+
+  const AgreementCheckbox({
+    super.key,
+    required this.isAgreed,
+    required this.onAgreementChanged,
+  });
+
   @override
   _AgreementCheckboxState createState() => _AgreementCheckboxState();
 }
 
 class _AgreementCheckboxState extends State<AgreementCheckbox> {
-  bool _isAgreed = false;
   String htmlContent = '';
 
   @override
@@ -52,19 +60,15 @@ class _AgreementCheckboxState extends State<AgreementCheckbox> {
             CupertinoDialogAction(
               child: const Text('拒绝'),
               onPressed: () {
-                setState(() {
-                  _isAgreed = false; // 点击同意时勾选
-                });
-                Navigator.of(context).pop(); // 点击拒绝时关闭对话框
+                widget.onAgreementChanged(false); // 拒绝时通知父组件取消勾选
+                Navigator.of(context).pop();
               },
             ),
             CupertinoDialogAction(
               child: const Text('同意'),
               onPressed: () {
-                setState(() {
-                  _isAgreed = true; // 点击同意时勾选
-                });
-                Navigator.of(context).pop(); // 关闭对话框
+                widget.onAgreementChanged(true); // 同意时通知父组件勾选
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -81,17 +85,14 @@ class _AgreementCheckboxState extends State<AgreementCheckbox> {
         Row(
           children: [
             Checkbox(
-              value: _isAgreed,
+              value: widget.isAgreed,
               onChanged: (value) {
                 if (value == false) {
-                  setState(() {
-                    _isAgreed = false; // 点击同意时勾选
-                  });
+                  widget.onAgreementChanged(false); // 通知父组件取消勾选
                   return;
                 }
-                // 不直接修改复选框状态，防止未同意时也被选中
                 if (value == true) {
-                  _showAgreementDialog(); // 仅在选中时显示对话框
+                  _showAgreementDialog(); // 显示对话框
                 }
               },
             ),

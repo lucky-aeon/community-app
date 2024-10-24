@@ -42,10 +42,12 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true),
             const SizedBox(height: 16),
             // 验证码输入框
-            VerificationCodeInput(controller: _captchaController),
+            VerificationCodeInput(label: "Captcha", controller: _captchaController),
             const SizedBox(height: 16),
             // 协议同意复选框
-            AgreementCheckbox(),
+            AgreementCheckbox(isAgreed: _agreeToTerms,onAgreementChanged: (value)=>{ setState(() {
+              _agreeToTerms = value;
+            })}),
             const SizedBox(height: 16),
             // 登录按钮
             ElevatedButton(

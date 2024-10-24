@@ -18,20 +18,23 @@ class RoundedTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
-        labelText: label,
+        labelText: label, // 默认放在内部的label
+        filled: true, // 填充输入区域
+        fillColor: const Color.fromARGB(58, 179, 179, 179), // 灰色背景
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Color.fromARGB(135, 158, 158, 158), width: 1.0),
+          borderSide: BorderSide.none, // 无边框
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Color.fromARGB(135, 158, 158, 158), width: 1.0),
+          borderSide: BorderSide.none, // 无边框
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
-          borderSide: const BorderSide(color: Color.fromARGB(135, 33, 149, 243), width: 1.5),
+          borderSide: BorderSide.none, // 无边框
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+        floatingLabelBehavior: FloatingLabelBehavior.auto, // 自动浮动
       ),
     );
   }
