@@ -16,12 +16,12 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController(text: "xhyovo@qq.com");
+  final TextEditingController _passwordController = TextEditingController(text: "liuzg0815");
   final TextEditingController _captchaController = TextEditingController();
   late AuthProvider _authProvider;
 
-  bool _agreeToTerms = false; // 协议同意状态
+  bool _agreeToTerms = true; // 协议同意状态
   bool _loading = false; // 加载状态
 
    @override
