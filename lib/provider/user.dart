@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/api/auth.dart';
+import 'package:lucky_community/api/base.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
@@ -22,6 +23,7 @@ class AuthProvider with ChangeNotifier {
         _isLoggedIn = true;
         _errorMessage = null;
         _token = response['data']['token'];
+        ApiBase.token = _token??'';
       } else {
         _errorMessage = response['msg'];
         _isLoggedIn = false;

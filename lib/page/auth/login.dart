@@ -21,10 +21,10 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _captchaController = TextEditingController();
   late AuthProvider _authProvider;
 
-  bool _agreeToTerms = false; // 协议同意状态
+  bool _agreeToTerms = true; // 协议同意状态
   bool _loading = false; // 加载状态
 
-   @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // 从 Provider 中获取 AuthProvider 的实例
@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
       _loading = false;
     });
     if (!mounted) return;
-    
+
     if (_authProvider.isLoggedIn) {
       Navigator.pushReplacement(
         context,
@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_authProvider.errorMessage?? '登录失败')),
+        SnackBar(content: Text(_authProvider.errorMessage ?? '登录失败')),
       );
     }
   }
