@@ -9,7 +9,7 @@ class AuthProvider with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  String? _token;
+  String? _token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTMsIk5hbWUiOiJ4aHlkYzc0ZDE1YS02OWM4LTQ5MDUtYTYyYi01OTUxNzU1NGI1MzMiLCJzdWIiOiJUb2tlbiIsImV4cCI6MTczMjUzMDcyMCwiaWF0IjoxNzI5OTM4NzIwfQ.5AkKrnr5q7Dv4Wg7oDyU-jmw60jVf1z3EOcz93kWkRM";
   String? get token => _token;
 
 
@@ -23,6 +23,7 @@ class AuthProvider with ChangeNotifier {
         _isLoggedIn = true;
         _errorMessage = null;
         _token = response['data']['token'];
+        debugPrint(_token);
         ApiBase.token = _token??'';
       } else {
         _errorMessage = response['msg'];

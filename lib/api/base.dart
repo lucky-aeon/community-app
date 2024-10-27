@@ -1,9 +1,27 @@
+import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiBase {
+  static const int _prefixLen = '/api/community'.length;
   static const String baseUrl = 'https://code.xhyovo.cn/api/community';
-  static String token = '';
+  static String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTMsIk5hbWUiOiJ4aHlkYzc0ZDE1YS02OWM4LTQ5MDUtYTYyYi01OTUxNzU1NGI1MzMiLCJzdWIiOiJUb2tlbiIsImV4cCI6MTczMjUzMDcyMCwiaWF0IjoxNzI5OTM4NzIwfQ.5AkKrnr5q7Dv4Wg7oDyU-jmw60jVf1z3EOcz93kWkRM';
+
+
+static String checkPrefix(String path) {
+  if (path.startsWith('/api/community')) {
+    return path.substring(_prefixLen);
+  }
+  return path;
+
+}
+
+static Future<http.Response> getNoJson(String path) async {
+  var url = Uri.parse('$baseUrl${checkPrefix(path)}');
+  return await http.get(url, headers: {
+    'Authorization': token,
+  });
+}
 
   static Future<Map<String, dynamic>> get(String path, {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
@@ -29,10 +47,10 @@ class ApiBase {
   }
 }
 
-class Result {
+class Result<E> {
   final int code;
   final String message;
-  final dynamic data;
+  final E data;
 
   Result(this.code, this.message, this.data);
 
