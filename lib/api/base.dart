@@ -1,11 +1,28 @@
+import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiBase {
+  static const int _prefixLen = '/api/community'.length;
   static const String baseUrl = 'https://code.xhyovo.cn/api/community';
   static String token = '';
 
-  static Future<Map<String, dynamic>> get(String path, {Map<String, dynamic>? params}) async {
+  static String checkPrefix(String path) {
+    if (path.startsWith('/api/community')) {
+      return path.substring(_prefixLen);
+    }
+    return path;
+  }
+
+  static Future<http.Response> getNoJson(String path) async {
+    var url = Uri.parse('$baseUrl${checkPrefix(path)}');
+    return await http.get(url, headers: {
+      'Authorization': token,
+    });
+  }
+
+  static Future<Map<String, dynamic>> get(String path,
+      {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
     if (params != null) {
       url = url.replace(queryParameters: params);
@@ -18,9 +35,14 @@ class ApiBase {
     }
   }
 
-  static Future<Map<String, dynamic>> post(String path, {Map<String, dynamic>? params}) async {
+  static Future<Map<String, dynamic>> post(String path,
+      {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
-    var response = await http.post(url, body: json.encode(params, ), headers: {'Content-Type': 'application/json', 'Authorization': token});
+    var response = await http.post(url,
+        body: json.encode(
+          params,
+        ),
+        headers: {'Content-Type': 'application/json', 'Authorization': token});
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -29,10 +51,10 @@ class ApiBase {
   }
 }
 
-class Result {
+class Result<E> {
   final int code;
   final String message;
-  final dynamic data;
+  final E data;
 
   Result(this.code, this.message, this.data);
 

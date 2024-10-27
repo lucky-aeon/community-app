@@ -1,90 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:lucky_community/model/article.dart';
+import 'package:lucky_community/page/article/detail.dart';
+import 'package:lucky_community/widgets/common/cover_not.dart';
 
 class ArticleListItem extends StatelessWidget {
-  final String title;
-  final String abstract;
-  final int likeCount;
-  final int commentCount;
-  final String coverImageUrl;
+  final Article article;
 
-  const ArticleListItem({
-    super.key,
-    required this.title,
-    required this.abstract,
-    required this.likeCount,
-    required this.commentCount,
-    required this.coverImageUrl,
-  });
+  const ArticleListItem({super.key, required this.article});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0), // 每个列表项的间距
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 左侧部分
-          Expanded(
-            flex: 3,
-            child: Column(
+    return InkWell(
+        onTap: () => {
+              // 点击事件
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ArticleDetailPage(
+                      articleDetail: article, // 打开新页面
+                    ),
+                  ))
+            },
+        child: Container(
+          // 设置背景色
+          decoration: const BoxDecoration(
+            color: Colors.white, // 白色背景
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(15.0), // 每个列表项的间距
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 文章标题
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                // 左侧部分
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 文章标题
+                      Text(
+                        article.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8), // 间距
+                      // 文章摘要
+                      Text(
+                        article.abstract ?? '无摘要',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8), // 间距
+                      // 点赞和评论数 (使用 Chip)
+                      Row(
+                        children: [
+                          const Icon(Icons.thumb_up_outlined, size: 16),
+                          const SizedBox(width: 4),
+                          Text((article.like ?? 0).toString(),
+                              style: const TextStyle(fontSize: 14)),
+                          const SizedBox(width: 16), // 图标和文字之间的间距
+                          const Icon(Icons.comment_outlined, size: 16),
+                          const SizedBox(width: 4),
+                          Text((article.comments ?? 0).toString(),
+                              style: const TextStyle(fontSize: 14)),
+                        ],
+                      ),
+                    ],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8), // 间距
-                // 文章摘要
-                Text(
-                  abstract,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 8), // 间距
-                // 点赞和评论数 (使用 Chip)
-                Row(
-                  children: [
-                    Chip(
-                      avatar: const Icon(Icons.thumb_up, size: 16),
-                      label: Text(likeCount.toString()),
-                      backgroundColor: Colors.blue.shade50,
-                    ),
-                    const SizedBox(width: 8),
-                    Chip(
-                      avatar: const Icon(Icons.comment, size: 16),
-                      label: Text(commentCount.toString()),
-                      backgroundColor: Colors.green.shade50,
-                    ),
-                  ],
-                ),
+                // 右侧封面图片
+                const SizedBox(width: 10), // 左右两部分之间的间距
+                // 封面图
+                ClipRRect(
+                    borderRadius: BorderRadius.circular(6.0), // 封面图圆角
+                    child: SizedBox(
+                      width: 125,
+                      child: (article.cover ?? "").isEmpty
+                          ? const NoCoverWidget()
+                          : Image.network(
+                              article.cover!,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                    )),
               ],
             ),
           ),
-          // 右侧封面图片
-          const SizedBox(width: 10), // 左右两部分之间的间距
-          // 封面图
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.0), // 封面图圆角
-            child: Image.network(
-              coverImageUrl,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 }
-

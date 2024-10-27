@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucky_community/page/home/latest.dart';
+import 'package:lucky_community/page/home/index.dart';
 
 class MobileLayout extends StatefulWidget {
   const MobileLayout({super.key});
@@ -27,9 +27,6 @@ class _MobileLayoutState extends State<MobileLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community'),
-      ),
       body: IndexedStack(
         index: _currentIndex, // 根据索引显示相应的页面
         children: _pages,
@@ -37,23 +34,13 @@ class _MobileLayoutState extends State<MobileLayout> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Community'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
       ),
     );
-  }
-}
-
-// 各个页面的 Widget 示例
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return LatestPage();
   }
 }
 

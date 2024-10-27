@@ -17,13 +17,13 @@ class _HelloPageState extends State<HelloPage> {
     super.initState();
 
     // 在页面加载后 1 秒执行跳转
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 1), () {
       // 使用 Navigator.pushReplacement 跳转到 MobileLayout 页面
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        // MaterialPageRoute(builder: (context) => const MobileLayout()),
-        MaterialPageRoute(builder: (context) => const LoginPage())
+        MaterialPageRoute(builder: (context) => const MobileLayout()),
+        // MaterialPageRoute(builder: (context) => const LoginPage())
       );
     });
   }
