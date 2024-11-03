@@ -1,13 +1,10 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/article.dart' as article_model;
 import 'package:lucky_community/provider/article.dart';
 import 'package:lucky_community/utils/date.dart' as date_utils;
+import 'package:lucky_community/widgets/markdown/preview.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 class ArticleDetailPage extends StatefulWidget {
   final article_model.Article articleDetail;
@@ -120,25 +117,8 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
           ),
           // 文章内容
           SliverToBoxAdapter(
-            child: Markdown(
+            child: HighMarkdownPrevie(
               data: widget.articleDetail.content ?? "",
-              shrinkWrap: true,
-              imageBuilder: (uri, title, alt) {
-                return FutureBuilder<http.Response>(
-                  future: ApiBase.getNoJson(uri.toString()), // 异步获取图片 URL
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator(); // 加载指示器
-                    } else if (snapshot.hasError) {
-                      return const Icon(Icons.error); // 错误提示
-                    } else {
-                      // 获取到图片数据后显示
-                      return Image.memory(
-                          snapshot.data!.bodyBytes); // 使用内存中的图片数据
-                    }
-                  },
-                );
-              },
             ),
           ),
         ],
@@ -154,8 +134,8 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
       return;
     }
     setState(() {
-      print("object, update");
       widget.articleDetail.content = detail.content ?? "";
+      debugPrint("article content:${detail.content}");
     });
   }
 }
