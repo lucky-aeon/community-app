@@ -8,7 +8,7 @@ class HomeProvider extends ChangeNotifier {
 
   List<Article> get articles => _articles;
 
-  void getLatestArticles() async {
+  getLatestArticles() async {
     Result<List<Article>> articlesResult = await article_api.Article.getLatest();
     if (!articlesResult.success) {
       debugPrint(articlesResult.message);
