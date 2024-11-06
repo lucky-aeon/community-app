@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:lucky_community/page/community/article_list.dart';
+import 'package:lucky_community/page/community/subcategory_tabview.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({super.key});
   @override
-  _CommunityPageState createState() => _CommunityPageState();
+  State<CommunityPage> createState() => _CommunityPageState();
 }
 
 class _CommunityPageState extends State<CommunityPage> {
   @override
-  Widget build(BuildContext context)  {
+  Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3, // 选项卡的数量
+      length: 3, // 上层 Tab 数量
       child: Scaffold(
         appBar: AppBar(
-          title: const TabBar(
+          title: const Text("双层 Tab 选择"),
+          bottom: const TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.article), text: "文章(Article)"),
-              Tab(icon: Icon(Icons.help), text: "问答(QA)"),
-              Tab(icon: Icon(Icons.share), text: "话题(Topic)"),
+              Tab(text: "文章"),
+              Tab(text: "问答"),
+              Tab(text: "帮助"),
             ],
           ),
-          bottom: Tab(child: Divider(height: 1),),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            Center(child: Text("文章")),
-            Center(child: Text("问答")),
-            Center(child: Text("话题")),
+            SubCategoryTabView(
+                parentId: 2, child: const CommunityArticleList()), // 文章
+            SubCategoryTabView(
+                parentId: 1, child: const CommunityArticleList()), // 问答
+            SubCategoryTabView(
+                parentId: 3, child: const CommunityArticleList()), // 帮助
           ],
         ),
       ),
     );
-  }  
+  }
 }

@@ -8,17 +8,19 @@ class CommunityProvider extends ChangeNotifier {
 
   List<classify_model.Classify> get classifyList => _classifyList;
 
-  getArticlesClassifys() async {
+  Future<List<classify_model.Classify>> getArticlesClassifys(int parentId) async {
     try {
       Result<List<classify_model.Classify>> res =
-          await Api.getClassify().get(2);
+          await Api.getClassify().get(parentId);
       if (!res.success) {
-        return;
+        return [];
       }
       _classifyList = res.data;
       notifyListeners();
+      return _classifyList;
     } catch (e) {
       debugPrint(e.toString());
     }
+    return [];
   }
 }
