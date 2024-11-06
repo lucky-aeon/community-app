@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/layout/hello.dart';
 import 'package:lucky_community/provider/article.dart';
+import 'package:lucky_community/provider/community.dart';
 import 'package:lucky_community/provider/home.dart';
 import 'package:lucky_community/provider/user.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,7 @@ void main() {
       ChangeNotifierProvider(create: (_) => AuthProvider()),
       ChangeNotifierProvider(create: (_) => HomeProvider()),
       ChangeNotifierProvider(create: (_) => ArticleProvider()),
+      ChangeNotifierProvider(create: (_) => CommunityProvider())
     ],
     child: const MainApp(),
   ));

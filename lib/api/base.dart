@@ -26,7 +26,7 @@ static Future<http.Response> getNoJson(String path) async {
   static Future<Map<String, dynamic>> get(String path, {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
     if (params != null) {
-      url = url.replace(queryParameters: params);
+      url = url.replace(queryParameters: params.map((key, value) => MapEntry(key, value.toString())),);
     }
     var response = await http.get(url, headers: {'Authorization': token});
     if (response.statusCode == 200) {

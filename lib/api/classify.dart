@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/classify.dart' as classify_model;
 
@@ -16,6 +17,7 @@ class Classify {
           List<classify_model.Classify>.from(
               response['data'].map((e) => classify_model.Classify.fromJson(e))));
     } catch (e) {
+      debugPrint(e.toString());
       return Result(500, e.toString(), []);
     }
   }
