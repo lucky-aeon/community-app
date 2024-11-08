@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/article.dart';
 import 'package:lucky_community/page/article/detail.dart';
 import 'package:lucky_community/widgets/common/cover_not.dart';
@@ -86,7 +87,8 @@ class ArticleListItem extends StatelessWidget {
                       child: (article.cover ?? "").isEmpty
                           ? const NoCoverWidget()
                           : Image.network(
-                              article.cover!,
+                            headers: {"Authorization": ApiBase.token},
+                              ApiBase.baseUrl+article.cover!,
                               height: 100,
                               fit: BoxFit.cover,
                             ),

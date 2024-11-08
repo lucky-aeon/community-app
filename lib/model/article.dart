@@ -46,7 +46,7 @@ class Article {
       state: json['state'] ?? 0,
       like: json['like'] ?? 0,
       comments: json['comments'] ?? 0,
-      cover: json['cover'] ?? '',
+      cover:  json['cover']== null || json['cover'].toString().length >5? "/file/singUrl?fileKey=${json['cover']}" : '',
       abstract: json['abstract'] ?? '',
       // tags: json['tags'] ?? '',
       type: json['type'] != null ? ArticleType.fromJson(json['type']) : null,

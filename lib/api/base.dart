@@ -5,7 +5,7 @@ import 'dart:convert';
 class ApiBase {
   static const int _prefixLen = '/api/community'.length;
   static const String baseUrl = 'https://code.xhyovo.cn/api/community';
-  static String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTMsIk5hbWUiOiJ4aHlkYzc0ZDE1YS02OWM4LTQ5MDUtYTYyYi01OTUxNzU1NGI1MzMiLCJzdWIiOiJUb2tlbiIsImV4cCI6MTczMjUzMDcyMCwiaWF0IjoxNzI5OTM4NzIwfQ.5AkKrnr5q7Dv4Wg7oDyU-jmw60jVf1z3EOcz93kWkRM';
+  static String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTMsIk5hbWUiOiJ4aHkzMGM1OTljOS1hMGExLTQ0ZTMtODUzYi0zYTkzYWQwODJiOGIiLCJzdWIiOiJUb2tlbiIsImV4cCI6MTczMjQzMzIwOSwiaWF0IjoxNzI5ODQxMjA5fQ.ougazhk2I4HDqHTTCAep-KP-9cR3iY10tuLS3QExVKU';
 
 
 static String checkPrefix(String path) {
