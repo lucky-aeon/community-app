@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:lucky_community/api/base.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:video_player/video_player.dart';
 
@@ -19,7 +20,9 @@ class VideoElementBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfterWithContext(BuildContext context, md.Element element,
       TextStyle? preferredStyle, TextStyle? parentStyle) {
-    return VideoPlayerWidget(url: element.attributes['url']!, title: element.attributes['title']!);
+    return VideoPlayerWidget(
+        url: ApiBase.getUrl(element.attributes['url']!),
+        title: element.attributes['title']!);
   }
 }
 
@@ -40,8 +43,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.url)
-      ..initialize().then((_) {
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url),
+        httpHeaders: {"Authorization": ApiBase.token})
+      ..initialize().then((s) {
         setState(() {});
       });
   }
@@ -107,7 +111,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     );
   }
 }
-
 
 class CustomTagBlockSyntax extends md.BlockSyntax {
   @override

@@ -14,27 +14,34 @@ class _CommunityPageState extends State<CommunityPage> {
     return DefaultTabController(
       length: 3, // 上层 Tab 数量
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text("双层 Tab 选择"),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: "文章"),
-              Tab(text: "问答"),
-              Tab(text: "帮助"),
-            ],
-          ),
-        ),
-        body: TabBarView(
+     
+        body: Column(
           children: [
-            SubCategoryTabView(
-                parentId: 2, child: const CommunityArticleList()), // 文章
-            SubCategoryTabView(
-                parentId: 1, child: const CommunityArticleList()), // 问答
-            SubCategoryTabView(
-                parentId: 3, child: const CommunityArticleList()), // 帮助
+            SafeArea(
+              child: const TabBar(
+                tabs: [
+                  Tab(text: "文章"),
+                  Tab(text: "问答"),
+                  Tab(text: "帮助"),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  SubCategoryTabView(
+                      parentId: 2, child: const CommunityArticleList()), // 文章
+                  SubCategoryTabView(
+                      parentId: 1, child: const CommunityArticleList()), // 问答
+                  SubCategoryTabView(
+                      parentId: 3, child: const CommunityArticleList()), // 帮助
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
+

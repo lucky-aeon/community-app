@@ -20,19 +20,11 @@ class HighMarkdownPrevie extends StatelessWidget {
         shrinkWrap: true,
         blockSyntaxes: <md.BlockSyntax>[CustomTagBlockSyntax()],
         imageBuilder: (uri, title, alt) {
-          return FutureBuilder<http.Response>(
-            future: ApiBase.getNoJson(uri.toString()), // 异步获取图片 URL
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const CircularProgressIndicator(); // 加载指示器
-              } else if (snapshot.hasError) {
-                return const Icon(Icons.error); // 错误提示
-              } else {
-                // 获取到图片数据后显示
-                return Image.memory(snapshot.data!.bodyBytes); // 使用内存中的图片数据
-              }
-            },
-          );
+          return Image.network(
+                            headers: {"Authorization": ApiBase.token},
+                              ApiBase.getUrl(uri.path),
+                              fit: BoxFit.cover,
+                            );
         });
   }
 }

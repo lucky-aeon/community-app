@@ -16,6 +16,10 @@ static String checkPrefix(String path) {
 
 }
 
+static String getUrl(String path) {
+  return '$baseUrl${checkPrefix(path)}';
+}
+
 static Future<http.Response> getNoJson(String path) async {
   var url = Uri.parse('$baseUrl${checkPrefix(path)}');
   return await http.get(url, headers: {
