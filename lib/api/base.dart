@@ -21,6 +21,10 @@ class ApiBase {
     });
   }
 
+  static String getUrl(String path) {
+    return '$baseUrl${checkPrefix(path)}';
+  }
+
   static Future<Map<String, dynamic>> get(String path,
       {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');

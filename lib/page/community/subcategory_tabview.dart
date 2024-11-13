@@ -59,7 +59,7 @@ class _SubCategoryTabViewState extends State<SubCategoryTabView>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return widget.subCategories.isEmpty? const SizedBox(): Column(
       children: [
         TabBar(
           controller: _tabController??TabController(length: widget.subCategories.length, vsync: this),

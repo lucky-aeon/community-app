@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/article.dart' as article_model;
 import 'package:lucky_community/provider/article.dart';
 import 'package:lucky_community/utils/date.dart' as date_utils;
@@ -40,9 +41,10 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                   // 封面图
                   (widget.articleDetail.cover ?? "").isNotEmpty
                       ? Image.network(
-                          widget.articleDetail.cover!,
-                          fit: BoxFit.cover,
-                        )
+                            headers: {"Authorization": ApiBase.token},
+                              ApiBase.getUrl(widget.articleDetail.cover!),
+                              fit: BoxFit.cover,
+                            )
                       : Container(
                           padding: const EdgeInsets.only(top: 35),
                           color: Colors.grey, // 默认背景色

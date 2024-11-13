@@ -29,7 +29,7 @@ class _CommunityArticleListState extends State<CommunityArticleList> {
   Widget build(BuildContext context) {
         _communityProvider = Provider.of(context, listen: true);
 
-    return Container(child: Column(children: buildItems()),);
+    return SingleChildScrollView(child: Column(children: buildItems()),);
   }
 
   List<Widget> buildItems() {
