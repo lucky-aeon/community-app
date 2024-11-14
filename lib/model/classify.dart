@@ -1,31 +1,31 @@
 class Classify {
   final int id;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final DateTime? deletedAt;
-  final int parentId;
+  final int? parentId;
   final String title;
-  final String desc;
-  final bool state;
-  final int sort;
-  final String articleState;
+  final String? desc;
+  final bool? state;
+  final int? sort;
+  final String? articleState;
   final List<String>? articleStates;
-  final String flagName;
+  final String? flagName;
   final List<Classify>? children;
 
   Classify({
     required this.id,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     this.deletedAt,
-    required this.parentId,
+    this.parentId,
     required this.title,
-    required this.desc,
-    required this.state,
-    required this.sort,
-    required this.articleState,
+    this.desc,
+    this.state,
+    this.sort,
+    this.articleState,
     this.articleStates,
-    required this.flagName,
+    this.flagName,
     this.children,
   });
 
@@ -52,8 +52,8 @@ class Classify {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt!.toIso8601String(),
+      'updatedAt': updatedAt!.toIso8601String(),
       'DeletedAt': deletedAt?.toIso8601String() ?? "0001-01-01 00:00:00",
       'parentId': parentId,
       'title': title,
