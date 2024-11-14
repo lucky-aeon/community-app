@@ -19,11 +19,22 @@ class _SubCategoryTabViewState extends State<SubCategoryTabView>
   late TabController? _tabController;
 
   @override
+  void didUpdateWidget(covariant SubCategoryTabView oldWidget) {
+    loadSubCategories();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: widget.subCategories.length, vsync: this);
+    _tabController =
+        TabController(length: widget.subCategories.length, vsync: this);
     _tabController?.addListener(_handleTabSelection);
 
+    loadSubCategories();
+  }
+
+  void loadSubCategories() {
     provider = Provider.of<CommunityProvider>(context, listen: false);
     provider.getArticlesClassifys(widget.parentId).then((value) {
       setState(() {
@@ -42,38 +53,43 @@ class _SubCategoryTabViewState extends State<SubCategoryTabView>
 
   void _initializeTabController() {
     // 如果已有 TabController，先移除监听器并销毁它
-   _tabController?.removeListener(_handleTabSelection); // 使用 ! 强制解包
+    _tabController?.removeListener(_handleTabSelection); // 使用 ! 强制解包
     _tabController?.dispose();
 
     // 初始化新的 TabController
-    _tabController = TabController(length: widget.subCategories.length, vsync: this);
+    _tabController =
+        TabController(length: widget.subCategories.length, vsync: this);
     _tabController?.addListener(_handleTabSelection);
+    _handleTabSelection();
   }
 
   void _handleTabSelection() {
-    if (_tabController!.indexIsChanging) {
-      provider.setCurrentClassify(widget.subCategories[_tabController!.index].id);
+      provider
+          .setCurrentClassify(widget.subCategories[_tabController!.index].id);
       provider.getCurrentListDataByArticle();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.subCategories.isEmpty? const SizedBox(): Column(
-      children: [
-        TabBar(
-          controller: _tabController??TabController(length: widget.subCategories.length, vsync: this),
-          isScrollable: true,
-          labelColor: Theme.of(context).primaryColor,
-          unselectedLabelColor: Colors.grey,
-          tabs: widget.subCategories
-              .map((subCategory) => Tab(text: subCategory.title))
-              .toList(),
-        ),
-        Expanded(
-          child: widget.child,
-        ),
-      ],
-    );
+    return widget.subCategories.isEmpty
+        ? const SizedBox()
+        : Column(
+            children: [
+              TabBar(
+                controller: _tabController ??
+                    TabController(
+                        length: widget.subCategories.length, vsync: this),
+                isScrollable: true,
+                labelColor: Theme.of(context).primaryColor,
+                unselectedLabelColor: Colors.grey,
+                tabs: widget.subCategories
+                    .map((subCategory) => Tab(text: subCategory.title))
+                    .toList(),
+              ),
+              Expanded(
+                child: widget.child,
+              ),
+            ],
+          );
   }
 }

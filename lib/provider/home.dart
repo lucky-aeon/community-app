@@ -11,7 +11,6 @@ class HomeProvider extends ChangeNotifier {
   getLatestArticles() async {
     Result<List<Article>> articlesResult = await article_api.Article.getLatest();
     if (!articlesResult.success) {
-      debugPrint(articlesResult.message);
       return;
     }
     _articles.clear();

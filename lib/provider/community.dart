@@ -46,8 +46,9 @@ class CommunityProvider extends ChangeNotifier {
       _currentClassifyArticles = result.data;
     } catch (e) {
       _currentClassifyArticles = [];
+    }finally {
+          notifyListeners();
     }
-    notifyListeners();
   }
 
   setCurrentClassify(int classifyId) {

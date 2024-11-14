@@ -9,7 +9,6 @@ class CommunityArticleList extends StatefulWidget {
 
   @override
   State<CommunityArticleList> createState() => _CommunityArticleListState();
-
 }
 
 class _CommunityArticleListState extends State<CommunityArticleList> {
@@ -27,9 +26,16 @@ class _CommunityArticleListState extends State<CommunityArticleList> {
 
   @override
   Widget build(BuildContext context) {
-        _communityProvider = Provider.of(context, listen: true);
+    _communityProvider = Provider.of(context, listen: true);
 
-    return SingleChildScrollView(child: Column(children: buildItems()),);
+    return SingleChildScrollView(
+      child: _communityProvider.currentClassifyArticles.isEmpty
+          ? const SizedBox(
+              child: Center(
+              child: Text("暂无数据"),
+            ))
+          : Column(children: buildItems()),
+    );
   }
 
   List<Widget> buildItems() {
@@ -41,4 +47,3 @@ class _CommunityArticleListState extends State<CommunityArticleList> {
     }).toList();
   }
 }
-
