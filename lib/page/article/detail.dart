@@ -131,7 +131,6 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
   }
 
   void getArticleDetail() async {
-    print("get article detail");
     article_model.Article? detail =
         await articleProvider.getArticleDetail(widget.articleDetail.id);
     if (detail == null) {
@@ -139,7 +138,6 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     }
     setState(() {
       widget.articleDetail.content = detail.content ?? "";
-      debugPrint("article content:${detail.content}");
     });
   }
 }
