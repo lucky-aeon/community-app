@@ -38,7 +38,10 @@ class _SubCategoryTabViewState extends State<SubCategoryTabView>
     provider = Provider.of<CommunityProvider>(context, listen: false);
     provider.getArticlesClassifys(widget.parentId).then((value) {
       setState(() {
-        widget.subCategories = value.map((e) => e).toList();
+        widget.subCategories = [
+          Classify(id: widget.parentId, title: '全部'),
+        ];
+        widget.subCategories.insertAll(1, value.map((e) => e).toList());
         _initializeTabController();
       });
     });
