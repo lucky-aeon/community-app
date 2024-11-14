@@ -41,6 +41,8 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                   // 封面图
                   (widget.articleDetail.cover ?? "").isNotEmpty
                       ? Image.network(
+                       width: double.infinity,
+                       height: double.infinity,
                             headers: {"Authorization": ApiBase.token},
                               ApiBase.getUrl(widget.articleDetail.cover!),
                               fit: BoxFit.cover,
