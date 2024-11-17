@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucky_community/model/article.dart';
 import 'package:lucky_community/provider/community.dart';
 import 'package:lucky_community/widgets/article/list_item.dart';
 import 'package:provider/provider.dart';

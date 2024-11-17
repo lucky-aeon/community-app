@@ -43,8 +43,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                       ? Image.network(
                        width: double.infinity,
                        height: double.infinity,
-                            headers: {"Authorization": ApiBase.token},
-                              ApiBase.getUrl(widget.articleDetail.cover!),
+                              ApiBase.getUrlByQueryToken(widget.articleDetail.cover!),
                               fit: BoxFit.cover,
                             )
                       : Container(
