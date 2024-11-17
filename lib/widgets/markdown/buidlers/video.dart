@@ -21,7 +21,7 @@ class VideoElementBuilder extends MarkdownElementBuilder {
   Widget visitElementAfterWithContext(BuildContext context, md.Element element,
       TextStyle? preferredStyle, TextStyle? parentStyle) {
     return VideoPlayerWidget(
-        url: ApiBase.getUrl(element.attributes['url']!),
+        url: ApiBase.getUrlByQueryToken(element.attributes['url']!),
         title: element.attributes['title']!);
   }
 }
@@ -43,10 +43,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url),
-        httpHeaders: {"Authorization": ApiBase.token})
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
       ..initialize().then((s) {
         setState(() {});
+      }).catchError((error) {
+        print('Video loading error: $error, url: ${widget.url}');
       });
   }
 

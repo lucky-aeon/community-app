@@ -1,38 +1,60 @@
-import 'package:flutter_html/flutter_html.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiBase {
   static const int _prefixLen = '/api/community'.length;
   static const String baseUrl = 'https://code.xhyovo.cn/api/community';
-  static String token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTMsIk5hbWUiOiJ4aHkzMGM1OTljOS1hMGExLTQ0ZTMtODUzYi0zYTkzYWQwODJiOGIiLCJzdWIiOiJUb2tlbiIsImV4cCI6MTczMjQzMzIwOSwiaWF0IjoxNzI5ODQxMjA5fQ.ougazhk2I4HDqHTTCAep-KP-9cR3iY10tuLS3QExVKU';
-
-
-static String checkPrefix(String path) {
-  if (path.startsWith('/api/community')) {
-    return path.substring(_prefixLen);
+  static String token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTMsIk5hbWUiOiJ4aHkzMGM1OTljOS1hMGExLTQ0ZTMtODUzYi0zYTkzYWQwODJiOGIiLCJzdWIiOiJUb2tlbiIsImV4cCI6MTczMjQzMzIwOSwiaWF0IjoxNzI5ODQxMjA5fQ.ougazhk2I4HDqHTTCAep-KP-9cR3iY10tuLS3QExVKU';
+  // ignore: constant_identifier_names
+  static const String AuthorizationKey = "Authorization";
+  static String checkPrefix(String path) {
+    if (path.startsWith('/api/community')) {
+      return path.substring(_prefixLen);
+    }
+    return path;
   }
-  return path;
 
-}
-
-static String getUrl(String path) {
-  return '$baseUrl${checkPrefix(path)}';
-}
-
-static Future<http.Response> getNoJson(String path) async {
+  static String getUrlByQueryToken(String path, {Map<String, dynamic>? queryParameters}) {
   var url = Uri.parse('$baseUrl${checkPrefix(path)}');
-  return await http.get(url, headers: {
-    'Authorization': token,
-  });
+
+  // 添加新的查询参数
+  if (queryParameters != null) {
+    queryParameters[AuthorizationKey] = token;
+  } else {
+    queryParameters = {AuthorizationKey: token};
+  }
+
+  // 合并原有查询参数和新查询参数
+  Map<String, dynamic> mergedQueryParameters = {};
+  if (url.hasQuery) {
+    mergedQueryParameters.addAll(url.queryParameters);
+  }
+  mergedQueryParameters.addAll(queryParameters);
+
+  // 生成包含新旧查询参数的URL
+  url = url.replace(queryParameters: mergedQueryParameters);
+
+  return url.toString();
 }
 
-  static Future<Map<String, dynamic>> get(String path, {Map<String, dynamic>? params}) async {
+  static Future<http.Response> getNoJson(String path) async {
+    var url = Uri.parse('$baseUrl${checkPrefix(path)}');
+    return await http.get(url, headers: {
+      AuthorizationKey: token,
+    });
+  }
+
+  static Future<Map<String, dynamic>> get(String path,
+      {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
     if (params != null) {
-      url = url.replace(queryParameters: params.map((key, value) => MapEntry(key, value.toString())),);
+      url = url.replace(
+        queryParameters:
+            params.map((key, value) => MapEntry(key, value.toString())),
+      );
     }
-    var response = await http.get(url, headers: {'Authorization': token});
+    var response = await http.get(url, headers: {AuthorizationKey: token});
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -40,9 +62,14 @@ static Future<http.Response> getNoJson(String path) async {
     }
   }
 
-  static Future<Map<String, dynamic>> post(String path, {Map<String, dynamic>? params}) async {
+  static Future<Map<String, dynamic>> post(String path,
+      {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
-    var response = await http.post(url, body: json.encode(params, ), headers: {'Content-Type': 'application/json', 'Authorization': token});
+    var response = await http.post(url,
+        body: json.encode(
+          params,
+        ),
+        headers: {'Content-Type': 'application/json', AuthorizationKey: token});
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {

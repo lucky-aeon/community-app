@@ -21,8 +21,7 @@ class HighMarkdownPrevie extends StatelessWidget {
         blockSyntaxes: <md.BlockSyntax>[CustomTagBlockSyntax()],
         imageBuilder: (uri, title, alt) {
           return Image.network(
-                            headers: {"Authorization": ApiBase.token},
-                              ApiBase.getUrl(uri.path),
+                              ApiBase.getUrlByQueryToken(uri.toString()),
                               fit: BoxFit.cover,
                             );
         });

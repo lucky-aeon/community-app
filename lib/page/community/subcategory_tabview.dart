@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/model/classify.dart';
-import 'package:lucky_community/page/community/article_list.dart';
 import 'package:lucky_community/provider/community.dart';
 import 'package:provider/provider.dart';
 
