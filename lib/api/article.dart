@@ -33,12 +33,13 @@ class Article {
   }
 
   Future<Result<List<article_model.Article>>> getPageList(
-      int classifyId, int page, int pageSize, {String? searchTitle, int? userId}) async {
+      int classifyId, int page, int pageSize, {String? searchTitle, int? userId, int? sortType}) async {
     try {
       var response = await ApiBase.get('/articles/list', params: {
         'typeId': classifyId,
         'page': page,
         'limit': pageSize,
+        'sortType': sortType,
       });
       if (!response['ok']) {
         throw Exception(response['msg']);

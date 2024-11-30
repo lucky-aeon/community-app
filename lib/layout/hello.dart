@@ -22,8 +22,8 @@ class _HelloPageState extends State<HelloPage> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MobileLayout()),
-        // MaterialPageRoute(builder: (context) => const LoginPage())
+        // MaterialPageRoute(builder: (context) => const MobileLayout()),
+        MaterialPageRoute(builder: (context) => const LoginPage())
       );
     });
   }

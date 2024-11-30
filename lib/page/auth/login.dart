@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/layout/mobile.dart';
+import 'package:lucky_community/provider/auth.dart';
 import 'package:lucky_community/provider/user.dart';
 import 'package:lucky_community/widgets/agreement_checkbox.dart';
 import 'package:lucky_community/widgets/rounded_text_field.dart';
@@ -94,6 +95,8 @@ class _LoginPageState extends State<LoginPage> {
     if (!mounted) return;
     
     if (_authProvider.isLoggedIn) {
+      // 登录成功后获取用户信息
+      await context.read<UserProvider>().fetchUserInfo();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MobileLayout()),

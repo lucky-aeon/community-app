@@ -1,52 +1,55 @@
-
+// 用于文章的用户信息
 class User {
   final int id;
   final String name;
-  final String desc;
   final String avatar;
-  final String role;
-  final String account;
-  final int state;
-  final DateTime createdAt;
-  final int subscribe;
 
   User({
     required this.id,
     required this.name,
-    required this.desc,
     required this.avatar,
-    required this.role,
-    required this.account,
-    required this.state,
-    required this.createdAt,
-    required this.subscribe,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      name: json['name'],
-      desc: json['desc'] ?? '',
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
       avatar: json['avatar'] ?? '',
-      role: json['role'] ?? '',
-      account: json['account'] ?? '',
-      state: json['state'],
-      createdAt: DateTime.parse(json['createdAt']),
-      subscribe: json['subscribe'] ?? 0,
     );
   }
+}
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'desc': desc,
-      'avatar': avatar,
-      'role': role,
-      'account': account,
-      'state': state,
-      'createdAt': createdAt.toIso8601String(),
-      'subscribe': subscribe,
-    };
+// 用于个人资料的用户信息
+class UserInfo {
+  final int id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String name;
+  final String account;
+  final String desc;
+  final String avatar;
+
+  UserInfo({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.name,
+    required this.account,
+    required this.desc,
+    required this.avatar,
+  });
+
+  factory UserInfo.fromJson(Map<String, dynamic> json) {
+    return UserInfo(
+      id: json['id'] ?? 0,
+      createdAt: DateTime.parse(json['createdAt'] ?? '1970-01-01'),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : DateTime.now(),
+      name: json['name'] ?? '',
+      account: json['account'] ?? '',
+      desc: json['desc'] ?? '',
+      avatar: json['avatar'] == null || json['avatar'].toString().length > 5
+          ? "/file/singUrl?fileKey=${json['avatar']}"
+          : '',
+    );
   }
 }

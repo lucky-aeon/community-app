@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 
 class VideoElementBuilder extends MarkdownElementBuilder {
   VideoElementBuilder();
@@ -20,9 +22,13 @@ class VideoElementBuilder extends MarkdownElementBuilder {
   @override
   Widget visitElementAfterWithContext(BuildContext context, md.Element element,
       TextStyle? preferredStyle, TextStyle? parentStyle) {
-    return VideoPlayerWidget(
+    if (element.tag == 'video') {
+      return VideoPlayerWidget(
         url: ApiBase.getUrlByQueryToken(element.attributes['url']!),
-        title: element.attributes['title']!);
+        title: element.attributes['title']!,
+      );
+    }
+    return const SizedBox.shrink();
   }
 }
 
@@ -30,47 +36,85 @@ class VideoPlayerWidget extends StatefulWidget {
   final String url;
   final String title;
 
-  VideoPlayerWidget({required this.url, this.title = '无标题'});
+  const VideoPlayerWidget({
+    Key? key,
+    required this.url,
+    this.title = '无标题',
+  }) : super(key: key);
 
   @override
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
-  bool _isPlaying = false;
+  late VideoPlayerController _videoPlayerController;
+  ChewieController? _chewieController;
+  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url))
-      ..initialize().then((s) {
-        setState(() {});
-      }).catchError((error) {
-        print('Video loading error: $error, url: ${widget.url}');
+    _initializePlayer();
+  }
+
+  Future<void> _initializePlayer() async {
+    try {
+      _videoPlayerController = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+      );
+
+      await _videoPlayerController.initialize();
+
+      _chewieController = ChewieController(
+        videoPlayerController: _videoPlayerController,
+        aspectRatio: _videoPlayerController.value.aspectRatio,
+        autoPlay: false,
+        looping: false,
+        allowFullScreen: true,
+        allowMuting: true,
+        showControls: true,
+        placeholder: Center(
+          child: CircularProgressIndicator(),
+        ),
+        materialProgressColors: ChewieProgressColors(
+          playedColor: Colors.red,
+          handleColor: Colors.redAccent,
+          backgroundColor: Colors.grey,
+          bufferedColor: Colors.white,
+        ),
+        showOptions: false,
+        errorBuilder: (context, errorMessage) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, color: Colors.white, size: 42),
+                SizedBox(height: 16),
+                Text(
+                  '视频加载失败',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          );
+        },
+        deviceOrientationsOnEnterFullScreen: [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ],
+        deviceOrientationsAfterFullScreen: [
+          DeviceOrientation.portraitUp,
+        ],
+      );
+
+      setState(() {
+        _isInitialized = true;
       });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _togglePlayPause() {
-    setState(() {
-      if (_isPlaying) {
-        _controller.pause();
-      } else {
-        _controller.play();
-      }
-      _isPlaying = !_isPlaying;
-    });
-  }
-
-  void _onTap() {
-    if (_isPlaying) {
-      _togglePlayPause(); // 点击时暂停
+    } catch (error) {
+      print('Error initializing video player: $error');
+      setState(() {
+        _isInitialized = false;
+      });
     }
   }
 
@@ -79,37 +123,36 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.title,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        GestureDetector(
-          onTap: _onTap, // 点击视频区域进行播放/暂停
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
+        if (widget.title.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              widget.title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
-              // 根据播放状态显示或隐藏按钮
-              if (_controller.value.isInitialized && !_isPlaying)
-                IconButton(
-                  icon: Icon(
-                    Icons.play_arrow,
-                    size: 64,
-                    color: const Color.fromARGB(255, 13, 222, 135),
-                  ),
-                  onPressed: _togglePlayPause,
-                ),
-              // 显示加载指示器
-              if (!_controller.value.isInitialized)
-                Center(child: CircularProgressIndicator()),
-            ],
+            ),
           ),
+        AspectRatio(
+          aspectRatio: _isInitialized
+              ? _videoPlayerController.value.aspectRatio
+              : 16 / 9,
+          child: _isInitialized && _chewieController != null
+              ? Chewie(controller: _chewieController!)
+              : Center(
+                  child: CircularProgressIndicator(),
+                ),
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    _chewieController?.dispose();
+    super.dispose();
   }
 }
 
@@ -133,10 +176,12 @@ class CustomTagBlockSyntax extends md.BlockSyntax {
       element.attributes['title'] = title;
       element.attributes['url'] = url;
 
+      parser.advance();
+
       return element;
     }
 
-    // 如果没有匹配，返回一个空的 Element
-    return md.Element.empty('text');
+    parser.advance();
+    return md.Element.empty('empty');
   }
 }

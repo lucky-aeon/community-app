@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -45,16 +46,23 @@ class ApiBase {
     });
   }
 
-  static Future<Map<String, dynamic>> get(String path,
-      {Map<String, dynamic>? params}) async {
+  static Future<Map<String, dynamic>> get(String path, {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
     if (params != null) {
       url = url.replace(
-        queryParameters:
-            params.map((key, value) => MapEntry(key, value.toString())),
+        queryParameters: params.map((key, value) => MapEntry(key, value.toString())),
       );
     }
+
+    debugPrint('GET Request:');
+    debugPrint('URL: $url');
+    debugPrint('Headers: {$AuthorizationKey: $token}');
+    if (params != null) debugPrint('Params: $params');
+
     var response = await http.get(url, headers: {AuthorizationKey: token});
+    debugPrint('Response Status: ${response.statusCode}');
+    debugPrint('Response Body: ${response.body}');
+
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -62,19 +70,60 @@ class ApiBase {
     }
   }
 
-  static Future<Map<String, dynamic>> post(String path,
-      {Map<String, dynamic>? params}) async {
+  static Future<Map<String, dynamic>> post(String path, {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
-    var response = await http.post(url,
-        body: json.encode(
-          params,
-        ),
-        headers: {'Content-Type': 'application/json', AuthorizationKey: token});
+    
+    debugPrint('POST Request:');
+    debugPrint('URL: $url');
+    debugPrint('Headers: {Content-Type: application/json, $AuthorizationKey: $token}');
+    debugPrint('Body: ${json.encode(params)}');
+
+    var response = await http.post(
+      url,
+      body: json.encode(params),
+      headers: {'Content-Type': 'application/json', AuthorizationKey: token},
+    );
+
+    debugPrint('Response Status: ${response.statusCode}');
+    debugPrint('Response Body: ${response.body}');
+
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
       throw Exception('Failed to load data');
     }
+  }
+
+  static Future<Map<String, dynamic>> delete(String path, {Map<String, dynamic>? params}) async {
+    var uri = Uri.parse('${baseUrl}${path}');
+    if (params != null) {
+      uri = uri.replace(queryParameters: params);
+    }
+
+    debugPrint('DELETE Request:');
+    debugPrint('URL: $uri');
+    debugPrint('Headers: {$AuthorizationKey: $token}');
+    if (params != null) debugPrint('Params: $params');
+
+    var response = await http.delete(
+      uri,
+      headers: await _getHeaders(),
+    );
+
+    debugPrint('Response Status: ${response.statusCode}');
+    debugPrint('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to delete data: ${response.statusCode}');
+    }
+  }
+
+  static Future<Map<String, String>> _getHeaders() async {
+    return {
+      AuthorizationKey: token,
+    };
   }
 }
 

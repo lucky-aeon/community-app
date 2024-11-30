@@ -66,9 +66,8 @@ class _SubCategoryTabViewState extends State<SubCategoryTabView>
   }
 
   void _handleTabSelection() {
-      provider
-          .setCurrentClassify(widget.subCategories[_tabController!.index].id);
-      provider.getCurrentListDataByArticle();
+    provider.setCurrentClassify(widget.subCategories[_tabController!.index].id);
+    provider.getCurrentListDataByArticle();
   }
 
   @override
