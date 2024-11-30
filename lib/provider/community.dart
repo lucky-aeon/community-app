@@ -5,60 +5,117 @@ import 'package:lucky_community/model/article.dart';
 import 'package:lucky_community/model/classify.dart' as classify_model;
 
 class CommunityProvider extends ChangeNotifier {
-  // 分类列表
-  List<classify_model.Classify> _classifyList = [];
-  List<classify_model.Classify> get classifyList => _classifyList;
+  int currentParentId = 2;
+  int currentClassifyId = 0;
+  List<classify_model.Classify> subCategories = [];
+  List<Article> currentClassifyArticles = [];
+  bool isLoading = false;
+  bool hasMore = true;
+  int currentPage = 1;
+  static const int pageSize = 10;
+  int currentSortId = 1;
 
-  // 文章列表，根据分类id获取
-  List<Article> _currentClassifyArticles = [];
-  List<Article> get currentClassifyArticles => _currentClassifyArticles;
+  final List<classify_model.Classify> parentCategories = [
+    classify_model.Classify(id: 2, title: '文章'),
+    classify_model.Classify(id: 1, title: '问答'),
+    classify_model.Classify(id: 3, title: '帮助'),
+  ];
 
-  // 分类id
-  int _currentClassifyId = 2;
-  int get currentClassifyId => _currentClassifyId;
-
-  Future<List<classify_model.Classify>> getArticlesClassifys(
-      int parentId) async {
-    try {
-      Result<List<classify_model.Classify>> res =
-          await Api.getClassify().get(parentId);
-      if (!res.success) {
-        return [];
-      }
-      _classifyList = res.data;
-      notifyListeners();
-      return _classifyList;
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    return [];
+  void resetPagination() {
+    currentPage = 1;
+    hasMore = true;
+    currentClassifyArticles = [];
   }
 
-  // 获取当前分类下的文章列表
-  getCurrentListDataByArticle() async {
-    try {
-      Result<List<Article>> result =
-          await Api.getArticle().getPageList(_currentClassifyId, 1, 10);
-      if (!result.success) {
-        _currentClassifyArticles = [];
-        return;
-      }
-      _currentClassifyArticles = result.data;
-    } catch (e) {
-      _currentClassifyArticles = [];
-    }finally {
-          notifyListeners();
-    }
-  }
-
-  setCurrentClassify(int classifyId) {
-    if (_currentClassifyId == classifyId) {
-      return;
-    }
-    if(classifyId < 0) {
-      return;
-    }
-    _currentClassifyId = classifyId;
+  void setCurrentParentId(int id) async {
+    currentParentId = id;
+    resetPagination();
     notifyListeners();
+
+    await getArticlesClassifys(id);
+    
+    if (subCategories.isNotEmpty) {
+      currentClassifyId = subCategories[0].id;
+      await getCurrentListDataByArticle();
+    }
+  }
+
+  void setCurrentClassify(int id) {
+    currentClassifyId = id;
+    resetPagination();
+    notifyListeners();
+  }
+
+  void setCurrentSort(int sortId) {
+    if (currentSortId != sortId) {
+      currentSortId = sortId;
+      resetPagination();
+      getCurrentListDataByArticle();
+    }
+  }
+
+  Future<void> getCurrentListDataByArticle({bool loadMore = false}) async {
+    if (isLoading || (!loadMore && currentClassifyArticles.isNotEmpty)) return;
+    if (loadMore && !hasMore) return;
+
+    isLoading = true;
+    if (!loadMore) {
+      currentPage = 1;
+      hasMore = true;
+    }
+    notifyListeners();
+
+    try {
+      var result = await Api.getArticle().getPageList(
+        currentClassifyId,
+        currentPage,
+        pageSize,
+        sortType: currentSortId,
+      );
+      
+      if (result.success) {
+        if (loadMore) {
+          currentClassifyArticles.addAll(result.data);
+        } else {
+          currentClassifyArticles = result.data;
+        }
+        
+        hasMore = result.data.length >= pageSize;
+        if (hasMore) currentPage++;
+      } else {
+        if (!loadMore) currentClassifyArticles = [];
+      }
+    } catch (e) {
+      print('Error loading articles: $e');
+      if (!loadMore) currentClassifyArticles = [];
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> init() async {
+    resetPagination();
+    await getArticlesClassifys(currentParentId);
+    if (subCategories.isNotEmpty) {
+      currentClassifyId = subCategories[0].id;
+    }
+    await getCurrentListDataByArticle();
+  }
+
+  Future<List<classify_model.Classify>> getArticlesClassifys(int parentId) async {
+    Result<List<classify_model.Classify>> res =
+        await Api.getClassify().get(parentId);
+    if (res.success) {
+      subCategories = [
+        classify_model.Classify(id: parentId, title: '全部'),
+        ...res.data,
+      ];
+      if (currentClassifyId == 0) {
+        currentClassifyId = parentId;
+      }
+      notifyListeners();
+    }
+    return subCategories;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/page/community/index.dart';
 import 'package:lucky_community/page/home/index.dart';
+import 'package:lucky_community/page/profile/index.dart';
 
 class MobileLayout extends StatefulWidget {
   const MobileLayout({super.key});
@@ -15,7 +16,7 @@ class _MobileLayoutState extends State<MobileLayout> {
   // 定义各个页面的 Widget
   final List<Widget> _pages = [
     const HomePage(),
-    CommunityPage(),
+    const CommunityPage(),
     const ProfilePage(),
   ];
 
@@ -56,14 +57,3 @@ class SearchPage extends StatelessWidget {
   }
 }
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text("Your Profile"),
-
-    );
-  }
-}

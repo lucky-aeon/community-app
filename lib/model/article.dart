@@ -46,13 +46,17 @@ class Article {
       state: json['state'] ?? 0,
       like: json['like'] ?? 0,
       comments: json['comments'] ?? 0,
-      cover:  json['cover']== null || json['cover'].toString().length >5? "/file/singUrl?fileKey=${json['cover']}" : '',
+      cover: json['cover'] == null || json['cover'].toString().length > 5
+          ? "/file/singUrl?fileKey=${json['cover']}"
+          : '',
       abstract: json['abstract'] ?? '',
       // tags: json['tags'] ?? '',
       type: json['type'] != null ? ArticleType.fromJson(json['type']) : null,
       user: json['user'] != null ? User.fromJson(json['user']) : null,
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      createdAt:
+          json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       stateName: json['stateName'] ?? 'Unknown',
       topNumber: json['topNumber'] ?? 0,
       content: json['content'] ?? '',

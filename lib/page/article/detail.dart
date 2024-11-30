@@ -1,11 +1,13 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/article.dart' as article_model;
 import 'package:lucky_community/provider/article.dart';
 import 'package:lucky_community/utils/date.dart' as date_utils;
 import 'package:lucky_community/widgets/markdown/preview.dart';
 import 'package:provider/provider.dart';
+import 'package:lucky_community/widgets/comment/list.dart';  // 导入评论列表组件
+import 'package:lucky_community/provider/comment.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final article_model.Article articleDetail;
@@ -18,12 +20,63 @@ class ArticleDetailPage extends StatefulWidget {
 
 class _ArticleDetailPageState extends State<ArticleDetailPage> {
   late ArticleProvider articleProvider;
+  bool _showFab = true;  // 控制FAB的显示/隐藏
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     articleProvider = Provider.of<ArticleProvider>(context, listen: false);
     getArticleDetail();
+    
+    // 添加滚动监听
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_scrollListener);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // 滚动监听处理
+  void _scrollListener() {
+    if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (_showFab) {
+        setState(() => _showFab = false);
+      }
+    }
+    if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      if (!_showFab) {
+        setState(() => _showFab = true);
+      }
+    }
+  }
+
+  // 显示评论列表
+  void _showComments() {
+    // 先初始化评论数据
+    context.read<CommentProvider>().initArticleComments(
+      widget.articleDetail.id,
+      widget.articleDetail.user?.id ?? 0,
+    );
+
+    // 然后显示评论列表
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: const CommentsPage(),
+        );
+      },
+    );
   }
 
   @override
@@ -31,6 +84,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: CustomScrollView(
+        controller: _scrollController,  // 添加滚动控制器
         slivers: [
           SliverAppBar(
             iconTheme: const IconThemeData(color: Colors.white),
@@ -120,11 +174,29 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
           ),
           // 文章内容
           SliverToBoxAdapter(
-            child: HighMarkdownPrevie(
-              data: widget.articleDetail.content ?? "",
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: HighMarkdownPrevie(
+                data: widget.articleDetail.content ?? "",
+              ),
             ),
           ),
         ],
+      ),
+      floatingActionButton: AnimatedSlide(
+        duration: Duration(milliseconds: 300),
+        offset: _showFab ? Offset.zero : Offset(0, 2),
+        child: AnimatedOpacity(
+          duration: Duration(milliseconds: 300),
+          opacity: _showFab ? 1 : 0,
+          child: FloatingActionButton(
+            onPressed: _showComments,
+            child: Badge(
+              label: Text('24'),  // 这里可以显示评论数量
+              child: Icon(Icons.comment),
+            ),
+          ),
+        ),
       ),
     );
   }
