@@ -192,7 +192,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
           child: FloatingActionButton(
             onPressed: _showComments,
             child: Badge(
-              label: Text('24'),  // 这里可以显示评论数量
+              label: Text(widget.articleDetail.comments?.toString() ?? '0'),  // 这里可以显示评论数量
               child: Icon(Icons.comment),
             ),
           ),
