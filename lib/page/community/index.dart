@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/page/community/article_list.dart';
 import 'package:lucky_community/provider/community.dart';
-import 'package:lucky_community/widgets/community/category_selector.dart';
 import 'package:lucky_community/widgets/community/sort_selector.dart';
 import 'package:provider/provider.dart';
 
@@ -13,13 +12,22 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     Future.microtask(() {
       context.read<CommunityProvider>().init();
     });
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<CommunityProvider>().getCurrentListDataByArticle(loadMore: true);
+    }
   }
 
   Widget _buildHeader() {
@@ -42,8 +50,12 @@ class _CommunityPageState extends State<CommunityPage> {
                           category.title,
                           style: TextStyle(
                             fontSize: 16,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            color: isSelected ? Colors.blue[700] : Colors.grey[700],
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? Colors.blue[700]
+                                : Colors.grey[700],
                           ),
                         ),
                         if (isSelected)
@@ -130,7 +142,8 @@ class _CommunityPageState extends State<CommunityPage> {
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[800],
                         fontSize: 13,
-                        fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+                        fontWeight:
+                            isSelected ? FontWeight.w500 : FontWeight.normal,
                       ),
                     ),
                   ),
@@ -146,33 +159,40 @@ class _CommunityPageState extends State<CommunityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            pinned: false,
-            snap: true,
-            toolbarHeight: 0,
-            expandedHeight: 160,
-            backgroundColor: Colors.white,
-            flexibleSpace: FlexibleSpaceBar(
-              background: SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildHeader(),
-                    _buildSearchBar(),
-                    _buildCategoryTabs(),
-                    const SizedBox(height: 4),
-                  ],
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await context.read<CommunityProvider>().getCurrentListDataByArticle();
+        },
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              floating: true,
+              pinned: false,
+              snap: true,
+              toolbarHeight: 0,
+              expandedHeight: 160,
+              backgroundColor: Colors.white,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  color: Colors.white,
+                  child: SafeArea(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildHeader(),
+                        _buildSearchBar(),
+                        _buildCategoryTabs(),
+                        const SizedBox(height: 4),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-          const SliverToBoxAdapter(
-            child: CommunityArticleList(),
-          ),
-        ],
+            const CommunityArticleList(),
+          ],
+        ),
       ),
     );
   }
@@ -180,6 +200,8 @@ class _CommunityPageState extends State<CommunityPage> {
   @override
   void dispose() {
     _searchController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     super.dispose();
   }
 }

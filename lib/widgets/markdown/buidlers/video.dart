@@ -24,7 +24,7 @@ class VideoElementBuilder extends MarkdownElementBuilder {
       TextStyle? preferredStyle, TextStyle? parentStyle) {
     if (element.tag == 'video') {
       return VideoPlayerWidget(
-        url: ApiBase.getUrlByQueryToken(element.attributes['url']!),
+        url: ApiBase.getUrlNoRequest(element.attributes['url']!),
         title: element.attributes['title']!,
       );
     }
@@ -61,6 +61,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     try {
       _videoPlayerController = VideoPlayerController.networkUrl(
         Uri.parse(widget.url),
+        httpHeaders: {
+          ApiBase.AuthorizationKey: ApiBase.token,
+        },
       );
 
       await _videoPlayerController.initialize();

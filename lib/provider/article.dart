@@ -13,4 +13,28 @@ class ArticleProvider extends ChangeNotifier {
     }
     return null;
   }
+
+  Future<bool> toggleLike(int articleId) async {
+    try {
+      // TODO: 调用后端 API 进行点赞/取消点赞
+      // final response = await http.post('/api/articles/$articleId/like');
+      // return response.statusCode == 200;
+      return true;
+    } catch (e) {
+      print('Toggle like failed: $e');
+      return false;
+    }
+  }
+
+  Future<bool> toggleCollect(int articleId) async {
+    try {
+      // TODO: 调用后端 API 进行收藏/取消收藏
+      // final response = await http.post('/api/articles/$articleId/collect');
+      // return response.statusCode == 200;
+      return true;
+    } catch (e) {
+      print('Toggle collect failed: $e');
+      return false;
+    }
+  }
 }

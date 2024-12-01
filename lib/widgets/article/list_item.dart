@@ -88,10 +88,10 @@ class ArticleListItem extends StatelessWidget {
                         child: (article.cover ?? "").isEmpty
                             ? const NoCoverWidget()
                             : Image.network(
-                                headers: {"Authorization": ApiBase.token},
-                                ApiBase.baseUrl + article.cover!,
-                                height: 100,
+                                ApiBase.getUrlNoRequest(article.cover!),
+                                headers: Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
                                 fit: BoxFit.cover,
+                                height: 100,
                               ),
                       )),
                 ],
