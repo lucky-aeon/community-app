@@ -32,8 +32,15 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       navigatorKey: navigatorKey,
       theme: ThemeData(
-          // scaffoldBackgroundColor: const Color.fromARGB(255, 245, 245, 245)
-          ),
+        scaffoldBackgroundColor: Colors.white,
+        primaryColor: Colors.blue,
+        primarySwatch: Colors.blue,
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: Colors.white,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Colors.grey,
+        ),
+      ),
       home: const HelloPage(),
     );
   }

@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/widgets/markdown/buidlers/video.dart';
 import 'package:markdown/markdown.dart' as md;
+import 'package:lucky_community/page/browser/web_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HighMarkdownPrevie extends StatelessWidget {
   final String data;
@@ -46,6 +48,7 @@ class HighMarkdownPrevie extends StatelessWidget {
                   maxScale: 4.0,
                   child: Image.network(
                     imageUrl,
+                    headers: Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -114,14 +117,28 @@ class HighMarkdownPrevie extends StatelessWidget {
       builders: _buildersMap,
       shrinkWrap: true,
       blockSyntaxes: <md.BlockSyntax>[CustomTagBlockSyntax()],
+      onTapLink: (text, href, title) {
+        if (href != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InAppBrowser(
+                url: href,
+                title: title ?? text,
+              ),
+            ),
+          );
+        }
+      },
       imageBuilder: (uri, title, alt) {
-        final imageUrl = ApiBase.getUrlByQueryToken(uri.toString());
+        final imageUrl = ApiBase.getUrlNoRequest(uri.toString());
         return GestureDetector(
           onTap: () => _showImageDialog(context, imageUrl),
           child: Hero(
             tag: imageUrl,
             child: Image.network(
               imageUrl,
+              headers: Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
               fit: BoxFit.cover,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
