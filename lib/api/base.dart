@@ -70,7 +70,7 @@ class ApiBase {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to load data');
+      return {'code': 500, 'ok': false, 'msg': 'Failed to load data: ${response.statusCode}'};
     }
   }
 
@@ -94,7 +94,7 @@ class ApiBase {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to load data');
+      return {'code': 500, 'ok': false, 'msg': 'Failed to load data: ${response.statusCode}'};
     }
   }
 
@@ -120,7 +120,7 @@ class ApiBase {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      throw Exception('Failed to delete data: ${response.statusCode}');
+      return {'code': 500, 'ok': false, 'msg': 'Failed to delete data: ${response.statusCode}'};
     }
   }
 
