@@ -30,39 +30,100 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      # Check Android Secrets
+      - name: Check Android Secrets
+        id: check_android
+        run: |
+          if [ "${{ secrets.KEYSTORE_BASE64 }}" != '' ] && \
+             [ "${{ secrets.KEYSTORE_PASSWORD }}" != '' ] && \
+             [ "${{ secrets.KEY_PASSWORD }}" != '' ] && \
+             [ "${{ secrets.KEY_ALIAS }}" != '' ]; then
+            echo "has_android_secrets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_android_secrets=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Check iOS Secrets
+      - name: Check iOS Secrets
+        id: check_ios
+        run: |
+          if [ "${{ secrets.APPLE_CERTIFICATES_BASE64 }}" != '' ] && \
+             [ "${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}" != '' ] && \
+             [ "${{ secrets.APPLE_CERTIFICATE_PASSWORD }}" != '' ] && \
+             [ "${{ secrets.APPLE_TEAM_ID }}" != '' ]; then
+            echo "has_ios_secrets=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_ios_secrets=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Android Setup and Build
       - name: Decode Keystore
+        if: steps.check_android.outputs.has_android_secrets == 'true'
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore.jks
           
       - name: Create key.properties
+        if: steps.check_android.outputs.has_android_secrets == 'true'
         run: |
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=keystore.jks" >> android/key.properties
-        
+
       - name: Build APK
+        if: steps.check_android.outputs.has_android_secrets == 'true'
         run: flutter build apk --release
 
-      - name: Build appBundle
+      - name: Build App Bundle
+        if: steps.check_android.outputs.has_android_secrets == 'true'
         run: flutter build appbundle
 
-      - name: Build IPA
-        run: flutter build ipa --no-codesign
-
-      - name: Compress Archives and IPAs
+      # iOS Setup and Build
+      - name: Install Apple Certificate
+        if: steps.check_ios.outputs.has_ios_secrets == 'true'
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.APPLE_CERTIFICATES_BASE64 }}
+          P12_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          BUILD_PROVISION_PROFILE_BASE64: ${{ secrets.APPLE_PROVISIONING_PROFILE_BASE64 }}
+          KEYCHAIN_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
         run: |
-          cd build
-          tar -czf ios_build.tar.gz ios
+          # Create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -t 3600 -l ~/Library/Keychains/build.keychain
 
-      - name: Get Tag Name
-        id: get_tag
-        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-        
+          # Import certificate to keychain
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output certificate.p12
+          security import certificate.p12 -k build.keychain -P "$P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+
+          # Apply provisioning profile
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo -n "$BUILD_PROVISION_PROFILE_BASE64" | base64 --decode --output ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+
+      - name: Build IPA
+        if: steps.check_ios.outputs.has_ios_secrets == 'true'
+        run: |
+          flutter build ipa --export-options-plist=ios/ExportOptions.plist
+
+      # Verify at least one platform can be built
+      - name: Check Build Configuration
+        run: |
+          if [ "${{ steps.check_android.outputs.has_android_secrets }}" != 'true' ] && \
+             [ "${{ steps.check_ios.outputs.has_ios_secrets }}" != 'true' ]; then
+            echo "Error: No platform secrets configured. Please configure either Android or iOS secrets."
+            exit 1
+          fi
+
+      # Create Release
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk,build/app/outputs/bundle/release/app-release.aab,build/ios_build.tar.gz"
-          tag: ${{ env.TAG_NAME }}
-          token: ${{ secrets.TOKEN }}
-          generateReleaseNotes: true
+          files: |
+            ${{ steps.check_android.outputs.has_android_secrets == 'true' && 'build/app/outputs/flutter-apk/app-release.apk' || '' }}
+            ${{ steps.check_android.outputs.has_android_secrets == 'true' && 'build/app/outputs/bundle/release/app-release.aab' || '' }}
+            ${{ steps.check_ios.outputs.has_ios_secrets == 'true' && 'build/ios/ipa/*.ipa' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
