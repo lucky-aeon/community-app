@@ -3,8 +3,11 @@ import 'package:lucky_community/api/api.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/article.dart';
 import 'package:lucky_community/model/classify.dart' as classify_model;
+import 'package:logging/logging.dart';
 
 class CommunityProvider extends ChangeNotifier {
+  final Logger lg = Logger('CommunityProvider');
+
   int currentParentId = 2;
   int currentClassifyId = 0;
   List<classify_model.Classify> subCategories = [];
@@ -33,7 +36,7 @@ class CommunityProvider extends ChangeNotifier {
     notifyListeners();
 
     await getArticlesClassifys(id);
-    
+
     if (subCategories.isNotEmpty) {
       currentClassifyId = subCategories[0].id;
       await getCurrentListDataByArticle();
@@ -72,21 +75,21 @@ class CommunityProvider extends ChangeNotifier {
         pageSize,
         sortType: currentSortId,
       );
-      
+
       if (result.success) {
         if (loadMore) {
           currentClassifyArticles.addAll(result.data);
         } else {
           currentClassifyArticles = result.data;
         }
-        
+
         hasMore = result.data.length >= pageSize;
         if (hasMore) currentPage++;
       } else {
         if (!loadMore) currentClassifyArticles = [];
       }
     } catch (e) {
-      print('Error loading articles: $e');
+      lg.severe('Error loading articles: $e');
       if (!loadMore) currentClassifyArticles = [];
     }
 
@@ -103,7 +106,8 @@ class CommunityProvider extends ChangeNotifier {
     await getCurrentListDataByArticle();
   }
 
-  Future<List<classify_model.Classify>> getArticlesClassifys(int parentId) async {
+  Future<List<classify_model.Classify>> getArticlesClassifys(
+      int parentId) async {
     Result<List<classify_model.Classify>> res =
         await Api.getClassify().get(parentId);
     if (res.success) {

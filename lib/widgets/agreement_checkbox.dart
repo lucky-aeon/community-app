@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:logging/logging.dart';
 
 class AgreementCheckbox extends StatefulWidget {
   final bool isAgreed; // 从父组件接收的状态
@@ -14,10 +15,12 @@ class AgreementCheckbox extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _AgreementCheckboxState createState() => _AgreementCheckboxState();
 }
 
 class _AgreementCheckboxState extends State<AgreementCheckbox> {
+  final lg = Logger('AgreementCheckbox');
   String htmlContent = '';
 
   @override
@@ -34,7 +37,7 @@ class _AgreementCheckboxState extends State<AgreementCheckbox> {
         htmlContent = html; // 更新状态
       });
     } catch (error) {
-      print('Error loading HTML: $error');
+      lg.severe('Error loading HTML: $error');
     }
   }
 

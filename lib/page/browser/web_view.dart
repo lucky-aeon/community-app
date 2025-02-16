@@ -9,10 +9,10 @@ class InAppBrowser extends StatefulWidget {
   final String title;
 
   const InAppBrowser({
-    Key? key,
+    super.key,
     required this.url,
     this.title = '',
-  }) : super(key: key);
+  });
 
   @override
   State<InAppBrowser> createState() => _InAppBrowserState();
@@ -60,8 +60,7 @@ class _InAppBrowserState extends State<InAppBrowser> {
               }
             });
             _controller.runJavaScript(
-              'localStorage.setItem("token", "${ApiBase.token}");'
-            );
+                'localStorage.setItem("token", "${ApiBase.token}");');
             Future.delayed(const Duration(milliseconds: 300), () {
               if (mounted) {
                 setState(() {
@@ -114,7 +113,8 @@ class _InAppBrowserState extends State<InAppBrowser> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
-                  fontWeight: _showCopySuccess ? FontWeight.bold : FontWeight.normal,
+                  fontWeight:
+                      _showCopySuccess ? FontWeight.bold : FontWeight.normal,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -159,4 +159,4 @@ class _InAppBrowserState extends State<InAppBrowser> {
       ),
     );
   }
-} 
+}

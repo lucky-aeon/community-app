@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/comment.dart';
@@ -101,7 +103,9 @@ class CommentItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       GestureDetector(
-                        onTap: userId != null ? () => onUserTap?.call(userId!) : null,
+                        onTap: userId != null
+                            ? () => onUserTap?.call(userId!)
+                            : null,
                         child: Text(
                           username,
                           style: TextStyle(
@@ -156,15 +160,25 @@ class CommentItem extends StatelessWidget {
                       return IconButton(
                         icon: const Icon(Icons.delete_outline),
                         onPressed: () {
-                          context.read<CommentProvider>().deleteComment(
-                            comment.id,
-                            isChild: false,
-                          ).then((success) {
-                            if (success) {
-                              Toast.show(context, '删除成功');
-                            } else {
-                              Toast.show(context, '删除失败', isError: true);
-                            }
+                          Navigator.of(context)
+                              .pushReplacement(
+                            MaterialPageRoute(
+                                builder: (context) => const SizedBox()),
+                          )
+                              .then((_) {
+                            context
+                                .read<CommentProvider>()
+                                .deleteComment(
+                                  comment.id,
+                                  isChild: false,
+                                )
+                                .then((success) {
+                              if (success) {
+                                Toast.show(context, '删除成功');
+                              } else {
+                                Toast.show(context, '删除失败', isError: true);
+                              }
+                            });
                           });
                         },
                         padding: EdgeInsets.zero,
@@ -243,13 +257,18 @@ class ReplyComment extends StatelessWidget {
                 ),
               ),
               if (replyToUsername != null) ...[
-                Text(' 回复 ', style: TextStyle(color: Colors.grey[700], fontSize: 14)),
+                Text(' 回复 ',
+                    style: TextStyle(color: Colors.grey[700], fontSize: 14)),
                 GestureDetector(
-                  onTap: replyToUserId != null ? () => onUserTap?.call(replyToUserId!) : null,
+                  onTap: replyToUserId != null
+                      ? () => onUserTap?.call(replyToUserId!)
+                      : null,
                   child: Text(
                     replyToUsername!,
                     style: TextStyle(
-                      color: replyToUserId != null ? Colors.blue : Colors.grey[700],
+                      color: replyToUserId != null
+                          ? Colors.blue
+                          : Colors.grey[700],
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -285,15 +304,25 @@ class ReplyComment extends StatelessWidget {
                   if (provider.userInfo?.id == comment.fromUserId) {
                     return GestureDetector(
                       onTap: () {
-                        context.read<CommentProvider>().deleteComment(
-                          comment.id,
-                          isChild: true,
-                        ).then((success) {
-                          if (success) {
-                            Toast.show(context, '删除成功');
-                          } else {
-                            Toast.show(context, '删除失败', isError: true);
-                          }
+                        Navigator.of(context)
+                            .pushReplacement(
+                          MaterialPageRoute(
+                              builder: (context) => const SizedBox()),
+                        )
+                            .then((_) {
+                          context
+                              .read<CommentProvider>()
+                              .deleteComment(
+                                comment.id,
+                                isChild: true,
+                              )
+                              .then((success) {
+                            if (success) {
+                              Toast.show(context, '删除成功');
+                            } else {
+                              Toast.show(context, '删除失败', isError: true);
+                            }
+                          });
                         });
                       },
                       child: Text(

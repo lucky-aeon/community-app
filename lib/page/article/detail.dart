@@ -6,7 +6,7 @@ import 'package:lucky_community/provider/article.dart';
 import 'package:lucky_community/utils/date.dart' as date_utils;
 import 'package:lucky_community/widgets/markdown/preview.dart';
 import 'package:provider/provider.dart';
-import 'package:lucky_community/widgets/comment/list.dart';  // 导入评论列表组件
+import 'package:lucky_community/widgets/comment/list.dart'; // 导入评论列表组件
 import 'package:lucky_community/provider/comment.dart';
 
 class ArticleDetailPage extends StatefulWidget {
@@ -20,8 +20,8 @@ class ArticleDetailPage extends StatefulWidget {
 
 class _ArticleDetailPageState extends State<ArticleDetailPage> {
   late ArticleProvider articleProvider;
-  bool _showFab = true;  // 控制FAB的显示/隐藏
-  ScrollController _scrollController = ScrollController();
+  bool _showFab = true; // 控制FAB的显示/隐藏
+  final ScrollController _scrollController = ScrollController();
   bool _isExpanded = false;
 
   @override
@@ -29,7 +29,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
     super.initState();
     articleProvider = Provider.of<ArticleProvider>(context, listen: false);
     getArticleDetail();
-    
+
     // 添加滚动监听
     _scrollController.addListener(_scrollListener);
   }
@@ -43,12 +43,14 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
 
   // 滚动监听处理
   void _scrollListener() {
-    if (_scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+    if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
       if (_showFab) {
         setState(() => _showFab = false);
       }
     }
-    if (_scrollController.position.userScrollDirection == ScrollDirection.forward) {
+    if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
       if (!_showFab) {
         setState(() => _showFab = true);
       }
@@ -59,9 +61,9 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
   void _showComments() {
     // 先初始化评论数据
     context.read<CommentProvider>().initArticleComments(
-      widget.articleDetail.id,
-      widget.articleDetail.user?.id ?? 0,
-    );
+          widget.articleDetail.id,
+          widget.articleDetail.user?.id ?? 0,
+        );
 
     // 然后显示评论列表
     showModalBottomSheet(
@@ -93,7 +95,7 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: CustomScrollView(
-          controller: _scrollController,  // 添加滚动控制器
+          controller: _scrollController, // 添加滚动控制器
           slivers: [
             SliverAppBar(
               backgroundColor: Theme.of(context).primaryColor,
@@ -107,15 +109,18 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                         ? Image.network(
                             width: double.infinity,
                             height: double.infinity,
-                            ApiBase.getUrlNoRequest(widget.articleDetail.cover!),
-                            headers: Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
+                            ApiBase.getUrlNoRequest(
+                                widget.articleDetail.cover!),
+                            headers: Map.from(
+                                {ApiBase.AuthorizationKey: ApiBase.token}),
                             fit: BoxFit.cover,
                           )
                         : Container(
                             padding: const EdgeInsets.only(top: 35),
                             color: Colors.grey, // 默认背景色
                             child: const Center(
-                              child: Text('没有封面', style: TextStyle(fontSize: 30)),
+                              child:
+                                  Text('没有封面', style: TextStyle(fontSize: 30)),
                             ),
                           ),
                     // 黑色半透明遮罩
@@ -195,38 +200,41 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
           ],
         ),
         floatingActionButton: AnimatedContainer(
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
           transform: Matrix4.translationValues(
-            0, 
-            _showFab ? 0 : 100, // 隐藏时向下移动100像素
-            0
-          ),
+              0,
+              _showFab ? 0 : 100, // 隐藏时向下移动100像素
+              0),
           child: AnimatedOpacity(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             opacity: _showFab ? 1 : 0,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 200),
                   height: _isExpanded ? 56.0 : 0.0,
                   child: AnimatedOpacity(
-                    duration: Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 200),
                     opacity: _isExpanded ? 1.0 : 0.0,
                     child: FloatingActionButton(
                       heroTag: 'like',
-                      onPressed: _isExpanded ? () async {
-                        final success = await articleProvider.toggleLike(widget.articleDetail.id);
-                        if (success) {
-                          setState(() {
-                            widget.articleDetail.like = (widget.articleDetail.like ?? 0) + 1;
-                          });
-                        }
-                      } : null,
+                      onPressed: _isExpanded
+                          ? () async {
+                              final success = await articleProvider
+                                  .toggleLike(widget.articleDetail.id);
+                              if (success) {
+                                setState(() {
+                                  widget.articleDetail.like =
+                                      (widget.articleDetail.like ?? 0) + 1;
+                                });
+                              }
+                            }
+                          : null,
                       backgroundColor: Colors.red,
-                      shape: CircleBorder(),
-                      child: Icon(
+                      shape: const CircleBorder(),
+                      child: const Icon(
                         Icons.favorite_border,
                         color: Colors.white,
                         size: 28,
@@ -245,14 +253,14 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
                     });
                   },
                   backgroundColor: Theme.of(context).primaryColor,
-                  shape: CircleBorder(),
+                  shape: const CircleBorder(),
                   child: Badge(
                     backgroundColor: Colors.red,
                     label: Text(
                       widget.articleDetail.comments?.toString() ?? '0',
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
-                    child: Icon(Icons.comment, color: Colors.white),
+                    child: const Icon(Icons.comment, color: Colors.white),
                   ),
                 ),
               ],

@@ -6,7 +6,6 @@ class ApiBase {
   static const int _prefixLen = '/api/community'.length;
   static const String baseUrl = 'https://code.xhyovo.cn/api/community';
   static String token = '';
-
   // ignore: constant_identifier_names
   static const String AuthorizationKey = "Authorization";
   static String checkPrefix(String path) {
@@ -14,10 +13,6 @@ class ApiBase {
       return path.substring(_prefixLen);
     }
     return path;
-  }
-
-  static String getUrl(String path) {
-    return '$baseUrl${checkPrefix(path)}';
   }
 
   static String getUrlByQueryToken(String path,
@@ -55,11 +50,13 @@ class ApiBase {
     });
   }
 
-  static Future<Map<String, dynamic>> get(String path, {Map<String, dynamic>? params}) async {
+  static Future<Map<String, dynamic>> get(String path,
+      {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
     if (params != null) {
       url = url.replace(
-        queryParameters: params.map((key, value) => MapEntry(key, value.toString())),
+        queryParameters:
+            params.map((key, value) => MapEntry(key, value.toString())),
       );
     }
 
@@ -75,16 +72,22 @@ class ApiBase {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      return {'code': 500, 'ok': false, 'msg': 'Failed to load data: ${response.statusCode}'};
+      return {
+        'code': 500,
+        'ok': false,
+        'msg': 'Failed to load data: ${response.statusCode}'
+      };
     }
   }
 
-  static Future<Map<String, dynamic>> post(String path, {Map<String, dynamic>? params}) async {
+  static Future<Map<String, dynamic>> post(String path,
+      {Map<String, dynamic>? params}) async {
     var url = Uri.parse('$baseUrl$path');
-    
+
     debugPrint('POST Request:');
     debugPrint('URL: $url');
-    debugPrint('Headers: {Content-Type: application/json, $AuthorizationKey: $token}');
+    debugPrint(
+        'Headers: {Content-Type: application/json, $AuthorizationKey: $token}');
     debugPrint('Body: ${json.encode(params)}');
 
     var response = await http.post(
@@ -99,12 +102,17 @@ class ApiBase {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      return {'code': 500, 'ok': false, 'msg': 'Failed to load data: ${response.statusCode}'};
+      return {
+        'code': 500,
+        'ok': false,
+        'msg': 'Failed to load data: ${response.statusCode}'
+      };
     }
   }
 
-  static Future<Map<String, dynamic>> delete(String path, {Map<String, dynamic>? params}) async {
-    var uri = Uri.parse('${baseUrl}${path}');
+  static Future<Map<String, dynamic>> delete(String path,
+      {Map<String, dynamic>? params}) async {
+    var uri = Uri.parse('$baseUrl$path');
     if (params != null) {
       uri = uri.replace(queryParameters: params);
     }
@@ -125,7 +133,11 @@ class ApiBase {
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
-      return {'code': 500, 'ok': false, 'msg': 'Failed to delete data: ${response.statusCode}'};
+      return {
+        'code': 500,
+        'ok': false,
+        'msg': 'Failed to delete data: ${response.statusCode}'
+      };
     }
   }
 

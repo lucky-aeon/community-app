@@ -45,25 +45,30 @@ class CategorySelector extends StatelessWidget {
                       ),
                       const Divider(),
                       ...parentCategories.map((category) {
-                        final isSelected = provider.currentParentId == category.id;
+                        final isSelected =
+                            provider.currentParentId == category.id;
                         return ListTile(
                           title: Text(
                             category.title,
                             style: TextStyle(
-                              color: isSelected ? Theme.of(context).primaryColor : null,
+                              color: isSelected
+                                  ? Theme.of(context).primaryColor
+                                  : null,
                               fontWeight: isSelected ? FontWeight.bold : null,
                             ),
                           ),
-                          trailing: isSelected ? Icon(
-                            Icons.check,
-                            color: Theme.of(context).primaryColor,
-                          ) : null,
+                          trailing: isSelected
+                              ? Icon(
+                                  Icons.check,
+                                  color: Theme.of(context).primaryColor,
+                                )
+                              : null,
                           onTap: () {
                             provider.setCurrentParentId(category.id);
                             Navigator.pop(context);
                           },
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 );
@@ -74,4 +79,4 @@ class CategorySelector extends StatelessWidget {
       },
     );
   }
-} 
+}

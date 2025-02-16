@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/comment.dart';
 import 'package:lucky_community/provider/comment.dart';
@@ -11,21 +12,23 @@ class CommentDetailPage extends StatefulWidget {
   final Comment comment;
 
   const CommentDetailPage({
-    Key? key,
+    super.key,
     required this.comment,
-  }) : super(key: key);
+  });
 
   @override
   State<CommentDetailPage> createState() => _CommentDetailPageState();
 }
 
 class _CommentDetailPageState extends State<CommentDetailPage> {
+  final lg = Logger('CommentDetailPage');
   final TextEditingController _commentController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
+      if (!mounted) return;
       final provider = context.read<CommentProvider>();
       provider.initCommentDetail(widget.comment);
     });
@@ -48,7 +51,8 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
       content: _commentController.text,
       parentId: widget.comment.id,
       rootId: widget.comment.id,
-      toUserId: provider.replyToComment?.fromUserId ?? widget.comment.fromUserId,
+      toUserId:
+          provider.replyToComment?.fromUserId ?? widget.comment.fromUserId,
       refreshChild: false,
     );
 
@@ -93,7 +97,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
 
   void _handleUserTap(BuildContext context, int userId) {
     // 处理用户点击事件
-    print('Clicked user: $userId');
+    lg.info('Clicked user: $userId');
   }
 
   @override
@@ -136,7 +140,8 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 GestureDetector(
-                                  onTap: () => _handleUserTap(context, widget.comment.fromUserId),
+                                  onTap: () => _handleUserTap(
+                                      context, widget.comment.fromUserId),
                                   child: Text(
                                     widget.comment.fromUserName,
                                     style: const TextStyle(
@@ -148,7 +153,8 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  formatFileModificationDate(widget.comment.createdAt!),
+                                  formatFileModificationDate(
+                                      widget.comment.createdAt!),
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                     fontSize: 12,
@@ -188,16 +194,19 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                         ),
                         const SizedBox(height: 16),
                         ...provider.replyComments.map((reply) => ReplyComment(
-                          comment: reply,
-                          username: reply.fromUserName,
-                          commentText: reply.content,
-                          timeAgo: formatFileModificationDate(reply.createdAt!),
-                          userId: reply.fromUserId,
-                          replyToUserId: reply.toUserId,
-                          replyToUsername: reply.toUserName,
-                          onUserTap: (userId) => _handleUserTap(context, userId),
-                          onReply: (replyComment) => _handleReply(context, replyComment),
-                        )).toList(),
+                              comment: reply,
+                              username: reply.fromUserName,
+                              commentText: reply.content,
+                              timeAgo:
+                                  formatFileModificationDate(reply.createdAt!),
+                              userId: reply.fromUserId,
+                              replyToUserId: reply.toUserId,
+                              replyToUsername: reply.toUserName,
+                              onUserTap: (userId) =>
+                                  _handleUserTap(context, userId),
+                              onReply: (replyComment) =>
+                                  _handleReply(context, replyComment),
+                            )),
                       ],
                     ),
                   ),
@@ -301,4 +310,4 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
       ),
     );
   }
-} 
+}

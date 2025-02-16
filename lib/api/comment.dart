@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
+import 'package:logging/logging.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/comment.dart';
 
 class CommentApi {
+  final lg = Logger('CommentApi');
   // 发布/回复评论
   Future<Result<void>> postComment({
     required String content,
@@ -20,12 +22,12 @@ class CommentApi {
         'parentId': parentId ?? 0,
         'tenantId': 0,
       };
-      
+
       if (rootId != null) params['rootId'] = rootId;
       if (toUserId != null) params['toUserId'] = toUserId;
 
       var response = await ApiBase.post('/comments/comment', params: params);
-      
+
       if (!response['ok']) {
         throw Exception(response['msg']);
       }
@@ -39,8 +41,8 @@ class CommentApi {
   Future<Result<List<Comment>>> getArticleComments(int businessId) async {
     try {
       var response = await ApiBase.get('/comments/byArticleId/$businessId');
-      print('API Response: $response');
-      
+      lg.info('API Response: $response');
+
       if (!response['ok']) {
         throw Exception(response['msg']);
       }
@@ -57,8 +59,8 @@ class CommentApi {
         ),
       );
     } catch (e, stackTrace) {
-      print('Exception in getArticleComments: $e');
-      print('Stack trace: $stackTrace');
+      lg.severe('Exception in getArticleComments: $e');
+      lg.severe('Stack trace: $stackTrace');
       return Result(500, e.toString(), []);
     }
   }
@@ -73,7 +75,7 @@ class CommentApi {
           'limit': '50',
         },
       );
-      
+
       if (!response['ok']) {
         throw Exception(response['msg']);
       }
@@ -99,7 +101,7 @@ class CommentApi {
   Future<Result<void>> deleteComment(int commentId) async {
     try {
       var response = await ApiBase.delete('/comments/$commentId');
-      
+
       if (!response['ok']) {
         throw Exception(response['msg']);
       }
@@ -119,7 +121,7 @@ class CommentApi {
         'articleId': articleId.toString(),
         'CommentId': commentId.toString(),
       });
-      
+
       if (!response['ok']) {
         throw Exception(response['msg']);
       }
@@ -128,4 +130,4 @@ class CommentApi {
       return Result(500, e.toString(), null);
     }
   }
-} 
+}

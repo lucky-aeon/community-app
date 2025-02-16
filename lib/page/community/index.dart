@@ -19,14 +19,20 @@ class _CommunityPageState extends State<CommunityPage> {
     super.initState();
     _scrollController.addListener(_onScroll);
     Future.microtask(() {
-      context.read<CommunityProvider>().init();
+      if (mounted) {
+        context.read<CommunityProvider>().init();
+      }
     });
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      context.read<CommunityProvider>().getCurrentListDataByArticle(loadMore: true);
+      if (mounted) {
+        context
+            .read<CommunityProvider>()
+            .getCurrentListDataByArticle(loadMore: true);
+      }
     }
   }
 
@@ -69,7 +75,7 @@ class _CommunityPageState extends State<CommunityPage> {
                     ),
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         );
@@ -126,7 +132,9 @@ class _CommunityPageState extends State<CommunityPage> {
                 child: InkWell(
                   onTap: () {
                     provider.setCurrentClassify(subCategory.id);
-                    provider.getCurrentListDataByArticle();
+                    if (mounted) {
+                      provider.getCurrentListDataByArticle();
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -161,7 +169,11 @@ class _CommunityPageState extends State<CommunityPage> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          await context.read<CommunityProvider>().getCurrentListDataByArticle();
+          if (mounted) {
+            await context
+                .read<CommunityProvider>()
+                .getCurrentListDataByArticle();
+          }
         },
         child: CustomScrollView(
           controller: _scrollController,

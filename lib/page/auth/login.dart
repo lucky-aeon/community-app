@@ -97,6 +97,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_authProvider.isLoggedIn) {
       // 登录成功后获取用户信息
       await context.read<UserProvider>().fetchUserInfo();
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MobileLayout()),

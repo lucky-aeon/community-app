@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/model/article.dart';
 import 'package:lucky_community/api/api.dart';
 
 class ArticleProvider extends ChangeNotifier {
+  final lg = Logger('ArticleProvider');
   late Article currentArticle;
   Future<Article?> getArticleDetail(int id) async {
     Result<Article?> res = await Api.getArticle().getDetail(id);
@@ -21,7 +23,7 @@ class ArticleProvider extends ChangeNotifier {
       // return response.statusCode == 200;
       return true;
     } catch (e) {
-      print('Toggle like failed: $e');
+      lg.severe('Toggle like failed: $e');
       return false;
     }
   }
@@ -33,7 +35,7 @@ class ArticleProvider extends ChangeNotifier {
       // return response.statusCode == 200;
       return true;
     } catch (e) {
-      print('Toggle collect failed: $e');
+      lg.severe('Toggle collect failed: $e');
       return false;
     }
   }
