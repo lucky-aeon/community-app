@@ -35,10 +35,6 @@ class _CommunityArticleListState extends State<CommunityArticleList> {
     }
   }
 
-  Future<void> _onRefresh() async {
-    await context.read<CommunityProvider>().getCurrentListDataByArticle();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<CommunityProvider>(

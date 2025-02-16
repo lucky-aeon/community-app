@@ -6,8 +6,12 @@ import 'package:provider/provider.dart';
 class SubCategoryTabView extends StatefulWidget {
   final int parentId;
   final Widget child;
-  List<Classify> subCategories = [];
-  SubCategoryTabView({super.key, required this.parentId, required this.child});
+  final List<Classify> subCategories;
+  const SubCategoryTabView(
+      {super.key,
+      required this.parentId,
+      required this.child,
+      required this.subCategories});
   @override
   State<SubCategoryTabView> createState() => _SubCategoryTabViewState();
 }
@@ -37,9 +41,8 @@ class _SubCategoryTabViewState extends State<SubCategoryTabView>
     provider = Provider.of<CommunityProvider>(context, listen: false);
     provider.getArticlesClassifys(widget.parentId).then((value) {
       setState(() {
-        widget.subCategories = [
-          Classify(id: widget.parentId, title: '全部'),
-        ];
+        widget.subCategories
+            .insert(0, Classify(id: widget.parentId, title: '全部'));
         widget.subCategories.insertAll(1, value.map((e) => e).toList());
         _initializeTabController();
       });

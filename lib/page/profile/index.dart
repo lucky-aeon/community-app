@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lucky_community/provider/user.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/api/base.dart';
-import 'package:lucky_community/provider/auth.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -59,10 +58,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                 CircleAvatar(
                                   radius: 60,
                                   backgroundImage: userInfo.avatar.isNotEmpty
-                                      ? NetworkImage(ApiBase.getUrlByQueryToken(userInfo.avatar))
+                                      ? NetworkImage(ApiBase.getUrlByQueryToken(
+                                          userInfo.avatar))
                                       : null,
                                   child: userInfo.avatar.isEmpty
-                                      ? const Icon(Icons.person, size: 60, color: Colors.grey)
+                                      ? const Icon(Icons.person,
+                                          size: 60, color: Colors.grey)
                                       : null,
                                 ),
                                 Positioned(
@@ -73,7 +74,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                     decoration: BoxDecoration(
                                       color: Colors.green,
                                       shape: BoxShape.circle,
-                                      border: Border.all(color: Colors.white, width: 2),
+                                      border: Border.all(
+                                          color: Colors.white, width: 2),
                                     ),
                                     child: const Icon(
                                       Icons.check,
@@ -85,7 +87,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                             const SizedBox(height: 15),
-                            
+
                             // 名字和位置
                             Text(
                               userInfo.name,
@@ -110,7 +112,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25, vertical: 10),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
@@ -142,9 +145,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         bottom: BorderSide(color: Colors.grey[300]!),
                       ),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: const [
+                      children: [
                         _StatItem(value: '492', label: 'Upcoming'),
                         _StatItem(value: '329', label: 'Past'),
                         _StatItem(value: '1124', label: 'Rating'),
@@ -153,11 +156,17 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
 
                   // 菜单列表
-                  _MenuItem(icon: Icons.edit, title: 'Edit Profile', onTap: () {} ),
-                  _MenuItem(icon: Icons.settings, title: 'Settings', onTap: () {}),
-                  _MenuItem(icon: Icons.tune, title: 'Preferences', onTap: () {}),
-                  _MenuItem(icon: Icons.help_outline, title: 'Help and Support', onTap: () {}),
-                  
+                  _MenuItem(
+                      icon: Icons.edit, title: 'Edit Profile', onTap: () {}),
+                  _MenuItem(
+                      icon: Icons.settings, title: 'Settings', onTap: () {}),
+                  _MenuItem(
+                      icon: Icons.tune, title: 'Preferences', onTap: () {}),
+                  _MenuItem(
+                      icon: Icons.help_outline,
+                      title: 'Help and Support',
+                      onTap: () {}),
+
                   // 底部留白，为底部导航栏腾出空间
                   const SizedBox(height: 80),
                 ],

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:http/http.dart' as http;
 import 'package:lucky_community/api/base.dart';
 import 'package:lucky_community/widgets/markdown/buidlers/video.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:lucky_community/page/browser/web_view.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HighMarkdownPrevie extends StatelessWidget {
   final String data;
@@ -15,9 +13,9 @@ class HighMarkdownPrevie extends StatelessWidget {
   };
 
   const HighMarkdownPrevie({
-    Key? key,
+    super.key,
     required this.data,
-  }) : super(key: key);
+  });
 
   void _showImageDialog(BuildContext context, String imageUrl) {
     bool isLandscape = false;
@@ -48,7 +46,8 @@ class HighMarkdownPrevie extends StatelessWidget {
                   maxScale: 4.0,
                   child: Image.network(
                     imageUrl,
-                    headers: Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
+                    headers:
+                        Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -77,7 +76,9 @@ class HighMarkdownPrevie extends StatelessWidget {
                   const SizedBox(height: 10),
                   IconButton(
                     icon: Icon(
-                      isLandscape ? Icons.screen_lock_portrait : Icons.screen_lock_landscape,
+                      isLandscape
+                          ? Icons.screen_lock_portrait
+                          : Icons.screen_lock_landscape,
                       color: Colors.white,
                       size: 30,
                     ),
@@ -124,7 +125,7 @@ class HighMarkdownPrevie extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => InAppBrowser(
                 url: href,
-                title: title ?? text,
+                title: title.isEmpty ? text : title,
               ),
             ),
           );

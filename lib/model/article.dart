@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:lucky_community/model/article_type.dart';
 import 'package:lucky_community/model/user.dart';
 

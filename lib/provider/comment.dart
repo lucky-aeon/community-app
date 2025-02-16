@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/api/api.dart';
 import 'package:lucky_community/model/comment.dart';
+import 'package:logging/logging.dart';
 
 class CommentProvider extends ChangeNotifier {
-  List<Comment> articleComments = [];  // 文章评论列表
-  List<Comment> replyComments = [];    // 评论的回复列表
+  final lg = Logger('CommentProvider');
+
+  List<Comment> articleComments = []; // 文章评论列表
+  List<Comment> replyComments = []; // 评论的回复列表
   bool isLoading = false;
   int? currentBusinessId;
   int? currentBusinessUserId;
@@ -58,11 +61,11 @@ class CommentProvider extends ChangeNotifier {
         }
         return true;
       } else {
-        print('Failed to post comment: ${result.message}');
+        lg.severe('Failed to post comment: ${result.message}');
         return false;
       }
     } catch (e) {
-      print('Error posting comment: $e');
+      lg.severe('Error posting comment: $e');
       return false;
     }
   }
@@ -70,20 +73,21 @@ class CommentProvider extends ChangeNotifier {
   // 获取文章评论列表
   Future<void> getArticleComments() async {
     if (currentBusinessId == null) return;
-    
+
     isLoading = true;
     notifyListeners();
 
     try {
-      var result = await Api.getComment().getArticleComments(currentBusinessId!);
+      var result =
+          await Api.getComment().getArticleComments(currentBusinessId!);
       if (result.success) {
         articleComments = result.data;
       } else {
-        print('Failed to load comments: ${result.message}');
+        lg.severe('Failed to load comments: ${result.message}');
         articleComments = [];
       }
     } catch (e) {
-      print('Error loading comments: $e');
+      lg.severe('Error loading comments: $e');
       articleComments = [];
     }
 
@@ -97,17 +101,17 @@ class CommentProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      debugPrint('Getting replies for comment: $rootId');
+      lg.fine('Getting replies for comment: $rootId');
       var result = await Api.getComment().getRootComments(rootId);
       if (result.success) {
         replyComments = result.data;
-        debugPrint('Got ${replyComments.length} replies');
+        lg.fine('Got ${replyComments.length} replies');
       } else {
-        debugPrint('Failed to load replies: ${result.message}');
+        lg.severe('Failed to load replies: ${result.message}');
         replyComments = [];
       }
     } catch (e) {
-      debugPrint('Error loading replies: $e');
+      lg.severe('Error loading replies: $e');
       replyComments = [];
     }
 
@@ -153,4 +157,4 @@ class CommentProvider extends ChangeNotifier {
       return false;
     }
   }
-} 
+}

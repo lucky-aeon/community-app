@@ -1,3 +1,5 @@
+import 'package:logging/logging.dart';
+
 class Comment {
   final int id;
   final DateTime? createdAt;
@@ -40,12 +42,19 @@ class Comment {
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
+    final lg = Logger('Comment.fromJson');
     try {
       return Comment(
         id: json['id'] ?? 0,
-        createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-        updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-        deletedAt: json['DeletedAt'] != null ? DateTime.parse(json['DeletedAt']) : null,
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.parse(json['updatedAt'])
+            : null,
+        deletedAt: json['DeletedAt'] != null
+            ? DateTime.parse(json['DeletedAt'])
+            : null,
         parentId: json['parentId'] ?? 0,
         rootId: json['rootId'] ?? 0,
         content: json['content'] ?? '',
@@ -61,14 +70,17 @@ class Comment {
         fromUserName: json['fromUserName'] ?? '',
         toUserName: json['toUserName'],
         articleTitle: json['articleTitle'] ?? '',
-        fromUserAvatar: json['fromUserAvatar']== null || json['fromUserAvatar'].toString().length >5? "/file/singUrl?fileKey=${json['fromUserAvatar']}" : '',
+        fromUserAvatar: json['fromUserAvatar'] == null ||
+                json['fromUserAvatar'].toString().length > 5
+            ? "/file/singUrl?fileKey=${json['fromUserAvatar']}"
+            : '',
         adoptionState: json['adoptionState'],
       );
     } catch (e, stackTrace) {
-      print('Error parsing comment: $e');
-      print('JSON data: $json');
-      print('Stack trace: $stackTrace');
+      lg.severe('Error parsing comment: $e');
+      lg.severe('JSON data: $json');
+      lg.severe('Stack trace: $stackTrace');
       rethrow;
     }
   }
-} 
+}

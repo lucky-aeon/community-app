@@ -17,15 +17,17 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController(text: "xhyovo@qq.com");
-  final TextEditingController _passwordController = TextEditingController(text: "liuzg0815");
+  final TextEditingController _usernameController =
+      TextEditingController(text: "xhyovo@qq.com");
+  final TextEditingController _passwordController =
+      TextEditingController(text: "liuzg0815");
   final TextEditingController _captchaController = TextEditingController();
   late AuthProvider _authProvider;
 
   bool _agreeToTerms = true; // 协议同意状态
   bool _loading = false; // 加载状态
 
-   @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // 从 Provider 中获取 AuthProvider 的实例
@@ -93,10 +95,11 @@ class _LoginPageState extends State<LoginPage> {
       _loading = false;
     });
     if (!mounted) return;
-    
+
     if (_authProvider.isLoggedIn) {
       // 登录成功后获取用户信息
       await context.read<UserProvider>().fetchUserInfo();
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const MobileLayout()),
@@ -104,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_authProvider.errorMessage?? '登录失败')),
+        SnackBar(content: Text(_authProvider.errorMessage ?? '登录失败')),
       );
     }
   }

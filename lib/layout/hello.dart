@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lucky_community/layout/mobile.dart';
 import 'package:lucky_community/page/auth/login.dart';
-
 
 class HelloPage extends StatefulWidget {
   const HelloPage({super.key});
@@ -21,10 +19,9 @@ class _HelloPageState extends State<HelloPage> {
       // 使用 Navigator.pushReplacement 跳转到 MobileLayout 页面
       if (!mounted) return;
       Navigator.pushReplacement(
-        context,
-        // MaterialPageRoute(builder: (context) => const MobileLayout()),
-        MaterialPageRoute(builder: (context) => const LoginPage())
-      );
+          context,
+          // MaterialPageRoute(builder: (context) => const MobileLayout()),
+          MaterialPageRoute(builder: (context) => const LoginPage()));
     });
   }
 

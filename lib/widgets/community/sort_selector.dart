@@ -35,16 +35,19 @@ class SortSelector extends StatelessWidget {
                       ),
                       const Divider(),
                       ...sortOptions.map((option) {
-                        final isSelected = provider.currentSortId == option['id'];
+                        final isSelected =
+                            provider.currentSortId == option['id'];
                         return ListTile(
                           title: Text(option['title']),
-                          trailing: isSelected ? const Icon(Icons.check, color: Colors.blue) : null,
+                          trailing: isSelected
+                              ? const Icon(Icons.check, color: Colors.blue)
+                              : null,
                           onTap: () {
                             provider.setCurrentSort(option['id']);
                             Navigator.pop(context);
                           },
                         );
-                      }).toList(),
+                      }),
                     ],
                   ),
                 );
@@ -55,4 +58,4 @@ class SortSelector extends StatelessWidget {
       },
     );
   }
-} 
+}

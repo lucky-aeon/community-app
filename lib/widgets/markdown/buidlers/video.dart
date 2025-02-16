@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:logging/logging.dart';
 import 'package:lucky_community/api/base.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:video_player/video_player.dart';
@@ -37,16 +38,18 @@ class VideoPlayerWidget extends StatefulWidget {
   final String title;
 
   const VideoPlayerWidget({
-    Key? key,
+    super.key,
     required this.url,
     this.title = '无标题',
-  }) : super(key: key);
+  });
 
   @override
+  // ignore: library_private_types_in_public_api
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  final lg = Logger('_VideoPlayerWidgetState');
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
   bool _isInitialized = false;
@@ -76,7 +79,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         allowFullScreen: true,
         allowMuting: true,
         showControls: true,
-        placeholder: Center(
+        placeholder: const Center(
           child: CircularProgressIndicator(),
         ),
         materialProgressColors: ChewieProgressColors(
@@ -87,7 +90,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         ),
         showOptions: false,
         errorBuilder: (context, errorMessage) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -114,7 +117,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _isInitialized = true;
       });
     } catch (error) {
-      print('Error initializing video player: $error');
+      lg.warning('Error initializing video player: $error');
       setState(() {
         _isInitialized = false;
       });
@@ -131,7 +134,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               widget.title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -143,7 +146,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               : 16 / 9,
           child: _isInitialized && _chewieController != null
               ? Chewie(controller: _chewieController!)
-              : Center(
+              : const Center(
                   child: CircularProgressIndicator(),
                 ),
         ),

@@ -11,6 +11,7 @@ class VerificationCodeInput extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _VerificationCodeInputState createState() => _VerificationCodeInputState();
 }
 

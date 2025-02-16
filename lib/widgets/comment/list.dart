@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/provider/comment.dart';
 import 'package:lucky_community/utils/date.dart';
@@ -7,13 +8,14 @@ import 'package:lucky_community/utils/toast.dart';
 import 'package:lucky_community/provider/user.dart';
 
 class CommentsPage extends StatefulWidget {
-  const CommentsPage({Key? key}) : super(key: key);
+  const CommentsPage({super.key});
 
   @override
   State<CommentsPage> createState() => _CommentsPageState();
 }
 
 class _CommentsPageState extends State<CommentsPage> {
+  final lg = Logger('CommentsPage');
   final TextEditingController _commentController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -47,7 +49,7 @@ class _CommentsPageState extends State<CommentsPage> {
   }
 
   void _handleUserTap(int userId) {
-    print('Clicked user: $userId');
+    lg.info('Clicked user: $userId');
   }
 
   Widget _buildInputBar(CommentProvider provider) {
@@ -153,7 +155,8 @@ class _CommentsPageState extends State<CommentsPage> {
                       builder: (context, provider, child) {
                         return Text(
                           '${provider.articleComments.length} 评论',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         );
                       },
                     ),
@@ -164,11 +167,13 @@ class _CommentsPageState extends State<CommentsPage> {
               Expanded(
                 child: Consumer<CommentProvider>(
                   builder: (context, provider, child) {
-                    if (provider.isLoading && provider.articleComments.isEmpty) {
+                    if (provider.isLoading &&
+                        provider.articleComments.isEmpty) {
                       return const Center(child: CircularProgressIndicator());
                     }
 
-                    if (!provider.isLoading && provider.articleComments.isEmpty) {
+                    if (!provider.isLoading &&
+                        provider.articleComments.isEmpty) {
                       return const Center(child: Text("暂无评论"));
                     }
 
@@ -183,12 +188,13 @@ class _CommentsPageState extends State<CommentsPage> {
                         itemBuilder: (context, index) {
                           final comment = provider.articleComments[index];
                           return CommentItem(
-                            avatarUrl: (comment.fromUserAvatar ?? "").isNotEmpty 
+                            avatarUrl: (comment.fromUserAvatar ?? "").isNotEmpty
                                 ? comment.fromUserAvatar!
                                 : "",
                             username: comment.fromUserName,
                             commentText: comment.content,
-                            timeAgo: formatFileModificationDate(comment.createdAt!),
+                            timeAgo:
+                                formatFileModificationDate(comment.createdAt!),
                             likeCount: 0,
                             isLiked: false,
                             userId: comment.fromUserId,
@@ -196,16 +202,21 @@ class _CommentsPageState extends State<CommentsPage> {
                             comment: comment,
                             reply: comment.childComments?.isNotEmpty == true
                                 ? Column(
-                                    children: comment.childComments!.map((reply) {
+                                    children:
+                                        comment.childComments!.map((reply) {
                                       String replyText = reply.content;
-                                      if (reply.toUserId != null && reply.toUserId != comment.fromUserId) {
-                                        replyText = "@${reply.toUserName} $replyText";
+                                      if (reply.toUserId != null &&
+                                          reply.toUserId !=
+                                              comment.fromUserId) {
+                                        replyText =
+                                            "@${reply.toUserName} $replyText";
                                       }
-                                      
+
                                       return ReplyComment(
                                         username: reply.fromUserName,
                                         commentText: replyText,
-                                        timeAgo: formatFileModificationDate(reply.createdAt!),
+                                        timeAgo: formatFileModificationDate(
+                                            reply.createdAt!),
                                         userId: reply.fromUserId,
                                         replyToUserId: reply.toUserId,
                                         replyToUsername: reply.toUserName,
@@ -215,12 +226,17 @@ class _CommentsPageState extends State<CommentsPage> {
                                     }).toList(),
                                   )
                                 : null,
-                            isOwner: comment.fromUserId == context.read<UserProvider>().currentUserId,
+                            isOwner: comment.fromUserId ==
+                                context.read<UserProvider>().currentUserId,
                             onDelete: () {
-                              provider.deleteComment(comment.id).then((success) {
+                              provider
+                                  .deleteComment(comment.id)
+                                  .then((success) {
                                 if (success) {
+                                  // ignore: use_build_context_synchronously
                                   Toast.show(context, '删除成功');
                                 } else {
+                                  // ignore: use_build_context_synchronously
                                   Toast.show(context, '删除失败', isError: true);
                                 }
                               });
