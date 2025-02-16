@@ -9,8 +9,8 @@ on:
       - main
 
 jobs:
-  flutter_test:
-    name: Flutter Test
+  test_and_analyze:
+    name: Test and Analyze
     runs-on: ubuntu-latest
     
     steps:
@@ -26,12 +26,25 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
         
+      - name: Check Test Directory
+        id: check_tests
+        run: |
+          if [ -d "test" ] && [ "$(find test -name '*_test.dart' | wc -l)" -gt 0 ]; then
+            echo "has_tests=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_tests=false" >> $GITHUB_OUTPUT
+          fi
+        
       - name: Run Tests
+        if: steps.check_tests.outputs.has_tests == 'true'
         run: flutter test
+        
+      - name: Analyze Project
+        run: flutter analyze
 
   build_android:
     name: Build Android
-    needs: flutter_test
+    needs: test_and_analyze
     runs-on: ubuntu-latest
     
     steps:
@@ -61,7 +74,7 @@ jobs:
 
   build_ios:
     name: Build iOS
-    needs: flutter_test
+    needs: test_and_analyze
     runs-on: macos-latest
     
     steps:
@@ -82,23 +95,3 @@ jobs:
           
       - name: Build iOS (Debug)
         run: flutter build ios --debug --no-codesign
-
-  analyze:
-    name: Static Analysis
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        
-      - name: Set Up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.24.3'
-          channel: 'stable'
-          
-      - name: Install Dependencies
-        run: flutter pub get
-        
-      - name: Analyze Project
-        run: flutter analyze
