@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/api/auth.dart';
 import 'package:lucky_community/api/base.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
   bool _isLoggedIn = false;
@@ -24,19 +25,56 @@ class AuthProvider with ChangeNotifier {
         _token = response['data']['token'];
         debugPrint(_token);
         ApiBase.token = _token??'';
+        await saveLoginInfo(username, password);
       } else {
         _errorMessage = response['msg'];
         _isLoggedIn = false;
       }
     } catch (error) {
       _errorMessage = 'Login failed. Please try again.';
+      debugPrint(error.toString());
       _isLoggedIn = false;
     }
     notifyListeners();
   }
 
-  void logout() {
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     _isLoggedIn = false;
     notifyListeners();
   }
+
+  // 检查是否已登录
+  Future<bool> checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  // 保存登录信息
+  Future<void> saveLoginInfo(String username, String password) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
+    await prefs.setString('password', password);
+    await prefs.setBool('isLoggedIn', true);
+  }
+
+  // 自动登录
+  Future<bool> autoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    final username = prefs.getString('username');
+    final password = prefs.getString('password');
+    
+    if (username != null && password != null) {
+      // 调用登录方法
+      try {
+        await login(username, password);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  }
+
 } 

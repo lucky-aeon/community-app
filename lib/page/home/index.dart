@@ -49,26 +49,26 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Banner 部分
-            SizedBox(
-              height: 160, // Banner 高度
-              child: PageView(
-                children: [
-                  // 这里可以放置你的轮播图图片
-                  Image.asset(
-                    'assets/img/kc.png',
-                    fit: BoxFit.fill,
-                  ),
-                  Image.asset(
-                    'assets/img/banner2.png',
-                    fit: BoxFit.fill,
-                  ),
-                  Image.asset(
-                    'assets/img/banner3.png',
-                    fit: BoxFit.cover,
-                  ),
-                ],
-              ),
-            ),
+            // SizedBox(
+            //   height: 160, // Banner 高度
+            //   child: PageView(
+            //     children: [
+            //       // 这里可以放置你的轮播图图片
+            //       Image.asset(
+            //         'assets/img/kc.png',
+            //         fit: BoxFit.fill,
+            //       ),
+            //       Image.asset(
+            //         'assets/img/banner2.png',
+            //         fit: BoxFit.fill,
+            //       ),
+            //       Image.asset(
+            //         'assets/img/banner3.png',
+            //         fit: BoxFit.cover,
+            //       ),
+            //     ],
+            //   ),
+            // ),
 
             // 课程列表部分
             Container(

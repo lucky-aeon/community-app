@@ -1,5 +1,8 @@
 # lucky_community
 
+[![Build & Release](https://github.com/lucky-aeon/community-app/actions/workflows/main.yml/badge.svg)](https://github.com/lucky-aeon/community-app/actions/workflows/main.yml)
+[![CI](https://github.com/lucky-aeon/community-app/actions/workflows/ci.yml/badge.svg)](https://github.com/lucky-aeon/community-app/actions/workflows/ci.yml)
+
 A new Flutter project.
 
 # Getting Started
