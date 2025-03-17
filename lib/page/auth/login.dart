@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
             // 登录按钮
             ElevatedButton(
               onPressed:
-                  _agreeToTerms && !_loading ? _login : null, // 仅在同意协议时允许登录
+                  _agreeToTerms && !_loading ? () => _login(false) : null, // 仅在同意协议时允许登录
               child: const Text('Login'),
             ),
           ],
@@ -81,19 +81,36 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _login() async {
+  @override
+  void initState() {
+    super.initState();
+    _login(true);
+  }
+
+  void _login(bool autoLogin) async {
     setState(() {
       _loading = true;
     });
-    String username = _usernameController.text;
-    String password = _passwordController.text;
-    // String captcha = _captchaController.text;
-    await _authProvider.login(username, password);
+    if (autoLogin) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final isLoggedIn = await authProvider.checkLoginStatus();
+      if (isLoggedIn) {
+        final success = await authProvider.autoLogin();
+        if (!success) {
+          return;
+        }
+      }
+    } else {
+      String username = _usernameController.text;
+      String password = _passwordController.text;
+      // String captcha = _captchaController.text;
+      await _authProvider.login(username, password);
+    }
+
     setState(() {
       _loading = false;
     });
     if (!mounted) return;
-
     if (_authProvider.isLoggedIn) {
       // 登录成功后获取用户信息
       await context.read<UserProvider>().fetchUserInfo();
