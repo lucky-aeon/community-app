@@ -71,8 +71,9 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 16),
             // 登录按钮
             ElevatedButton(
-              onPressed:
-                  _agreeToTerms && !_loading ? () => _login(false) : null, // 仅在同意协议时允许登录
+              onPressed: _agreeToTerms && !_loading
+                  ? () => _login(false)
+                  : null, // 仅在同意协议时允许登录
               child: const Text('Login'),
             ),
           ],
@@ -91,25 +92,28 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _loading = true;
     });
-    if (autoLogin) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final isLoggedIn = await authProvider.checkLoginStatus();
-      if (isLoggedIn) {
-        final success = await authProvider.autoLogin();
-        if (!success) {
+    try {
+      if (autoLogin) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final isLoggedIn = await authProvider.checkLoginStatus();
+        if (!isLoggedIn) {
           return;
         }
+        if (!await authProvider.autoLogin()) {
+          return;
+        }
+      } else {
+        String username = _usernameController.text;
+        String password = _passwordController.text;
+        // String captcha = _captchaController.text;
+        await _authProvider.login(username, password);
       }
-    } else {
-      String username = _usernameController.text;
-      String password = _passwordController.text;
-      // String captcha = _captchaController.text;
-      await _authProvider.login(username, password);
+    } finally {
+      setState(() {
+        _loading = false;
+      });
     }
 
-    setState(() {
-      _loading = false;
-    });
     if (!mounted) return;
     if (_authProvider.isLoggedIn) {
       // 登录成功后获取用户信息
