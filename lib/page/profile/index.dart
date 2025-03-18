@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lucky_community/page/auth/login.dart';
+import 'package:lucky_community/page/profile/setting.dart';
+import 'package:lucky_community/provider/auth.dart';
 import 'package:lucky_community/provider/user.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/api/base.dart';
@@ -11,37 +14,21 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late AuthProvider _authProvider;
+  @override
+  void initState() {
+    super.initState();
+    _authProvider = Provider.of<AuthProvider>(context, listen: false);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Stack(
           children: [
             SingleChildScrollView(
               child: Column(
                 children: [
-                  // 顶部标题栏
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'My Profile',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.notifications_outlined),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ),
-
                   // 个人信息部分
                   Consumer<UserProvider>(
                     builder: (context, provider, child) {
@@ -52,14 +39,37 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
+                            // 顶部标题栏
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'hi, ${userInfo.name}',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon:
+                                      const Icon(Icons.notifications_outlined),
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
                             // 头像和认证标记
                             Stack(
                               children: [
                                 CircleAvatar(
                                   radius: 60,
                                   backgroundImage: userInfo.avatar.isNotEmpty
-                                      ? NetworkImage(ApiBase.getUrlByQueryToken(
-                                          userInfo.avatar))
+                                      ? NetworkImage(
+                                          ApiBase.getUrlNoRequest(
+                                              userInfo.avatar),
+                                          headers: {
+                                              ApiBase.AuthorizationKey:
+                                                  ApiBase.token,
+                                            })
                                       : null,
                                   child: userInfo.avatar.isEmpty
                                       ? const Icon(Icons.person,
@@ -87,86 +97,34 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                             const SizedBox(height: 15),
-
-                            // 名字和位置
-                            Text(
-                              userInfo.name,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
                             Text(
                               userInfo.desc,
                               style: const TextStyle(color: Colors.grey),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-
                             // 操作按钮
-                            const SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 25, vertical: 10),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                  child: const Text('View Profile'),
-                                ),
-                                const SizedBox(width: 10),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.more_horiz),
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: Colors.grey[200],
-                                    shape: const CircleBorder(),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            _builderMidButtons(true),
                           ],
                         ),
                       );
                     },
                   ),
-
                   // 统计数据
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Colors.grey[300]!),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _StatItem(value: '492', label: 'Upcoming'),
-                        _StatItem(value: '329', label: 'Past'),
-                        _StatItem(value: '1124', label: 'Rating'),
-                      ],
-                    ),
-                  ),
-
+                  _builderStatistics(false),
                   // 菜单列表
+                  // _MenuItem(icon: Icons.edit, title: 'Edit Profile', onTap: () {}),
                   _MenuItem(
-                      icon: Icons.edit, title: 'Edit Profile', onTap: () {}),
-                  _MenuItem(
-                      icon: Icons.settings, title: 'Settings', onTap: () {}),
-                  _MenuItem(
-                      icon: Icons.tune, title: 'Preferences', onTap: () {}),
-                  _MenuItem(
-                      icon: Icons.help_outline,
-                      title: 'Help and Support',
-                      onTap: () {}),
-
+                      icon: Icons.settings, title: 'Settings', onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const AppSettingPage()));
+                      }),
+                  // _MenuItem(icon: Icons.tune, title: 'Preferences', onTap: () {}),
+                  // _MenuItem(icon: Icons.help_outline, title: 'Help and Support', onTap: () {}),
+                  _MenuItem(icon: Icons.logout, title: 'Logout', onTap: () async {
+                    await _authProvider.logout();
+                    // ignore: use_build_context_synchronously
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                  }),
                   // 底部留白，为底部导航栏腾出空间
                   const SizedBox(height: 80),
                 ],
@@ -175,6 +133,65 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _builderStatistics(bool noHide) {
+    if (noHide != true) {
+      return Container(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.grey[300]!),
+          ),
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[300]!),
+        ),
+      ),
+      child: const Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _StatItem(value: '492', label: 'Upcoming'),
+          _StatItem(value: '329', label: 'Past'),
+          _StatItem(value: '1124', label: 'Rating'),
+        ],
+      ),
+    );
+  }
+
+  // 关注按钮，游客显示关注按钮，已登录显示关注按钮和取消关注按钮
+  Widget _builderMidButtons(bool hide) {
+    if (hide == true) return const SizedBox();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          child: const Text('关 注'),
+        ),
+        const SizedBox(width: 10),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.more_horiz),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+            shape: const CircleBorder(),
+          ),
+        ),
+      ],
     );
   }
 }
