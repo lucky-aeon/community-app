@@ -19,4 +19,19 @@ class UserProvider with ChangeNotifier {
       debugPrint('Error fetching user info: $e');
     }
   }
+
+  Future<void> updateNickname(String newNickname) async {
+    try {
+      // var result = await UserApi.updateUserInfo(nickname: newNickname);
+      // if (result.success) {
+      //   // 更新成功后重新获取用户信息
+      //   await fetchUserInfo();
+      // } else {
+      //   throw Exception(result.message ?? '更新失败');
+      // }
+    } catch (e) {
+      debugPrint('Error updating nickname: $e');
+      throw Exception(e.toString());
+    }
+  }
 }
