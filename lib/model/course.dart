@@ -1,6 +1,8 @@
 /* 课程
  */
 
+import 'package:flutter/foundation.dart';
+
 class Course {
   int id;
   String title;
@@ -39,23 +41,26 @@ class Course {
   });
 
   factory Course.fromJson(Map<String, dynamic> json) {
+    debugPrint(json.toString());
     return Course(
       id: json['id'],
-      title: json['title'],
-      desc: json['desc'],
-      technology: json['technology'],
-      technologys: List<String>.from(json['technologys']),
-      url: json['url'],
-      userId: json['userId'],
-      money: json['money'],
-      cover: json['cover'],
-      score: json['score'],
-      state: json['state'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      deletedAt: json['deletedAt'],
-      sections: json['sections'],
-      views: json['views'],
+      title: json['title'] ?? '暂无标题',
+      desc: json['desc'] ?? '暂无描述',
+      technology: json['technology'] ?? '暂无技术',
+      technologys: List<String>.from(json['technologys'] ?? []),
+      url: json['url'] ?? '暂无链接',
+      userId: json['userId'] ?? 0,
+      money: json['money'] ?? 0,
+      cover: json['cover'] != null && json['cover'].toString().length > 5
+          ? "/file/singUrl?fileKey=${json['cover']}"
+          : '',
+      score: json['score'] ?? 0,
+      state: json['state'] ?? 0,
+      createdAt: json['createdAt'] ?? '暂无创建时间',
+      updatedAt: json['updatedAt'] ?? '暂无更新时间',
+      deletedAt: json['deletedAt'] ?? '暂无删除时间',
+      sections: json['sections'] ?? [],
+      views: json['views'] ?? 0,
     );
   }
 

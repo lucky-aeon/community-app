@@ -65,7 +65,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
     if (avatarUrl == null || avatarUrl.isEmpty) {
       return CircleAvatar(
         radius: 20,
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
         child: const Icon(
           Icons.person,
           size: 24,
@@ -76,7 +76,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
 
     return CircleAvatar(
       radius: 20,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       child: ClipOval(
         child: Image.network(
           ApiBase.getUrlByQueryToken(avatarUrl),
@@ -105,7 +105,6 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('评论详情'),
-        backgroundColor: Colors.white,
         elevation: 0.5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
@@ -124,7 +123,6 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
               children: [
                 // 主评论
                 Container(
-                  color: Colors.white,
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +178,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                 // 回复列表
                 if (provider.replyComments.isNotEmpty)
                   Container(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.background,
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,8 +233,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
         bottom: MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+        border: Border(top: BorderSide(color: Theme.of(context).colorScheme.surface)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -269,7 +266,7 @@ class _CommentDetailPageState extends State<CommentDetailPage> {
                 child: Container(
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    // color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextField(

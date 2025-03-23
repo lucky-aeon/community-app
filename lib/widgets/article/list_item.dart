@@ -26,7 +26,6 @@ class ArticleListItem extends StatelessWidget {
         children: [
           Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),

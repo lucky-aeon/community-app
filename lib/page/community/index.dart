@@ -41,7 +41,7 @@ class _CommunityPageState extends State<CommunityPage> {
       builder: (context, provider, child) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          color: Colors.white,
+          // color: Colors.white,
           child: Row(
             children: [
               ...provider.parentCategories.map((category) {
@@ -86,7 +86,7 @@ class _CommunityPageState extends State<CommunityPage> {
   Widget _buildSearchBar() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      color: Colors.white,
+      // color: Colors.white,
       child: Row(
         children: [
           Expanded(
@@ -118,7 +118,7 @@ class _CommunityPageState extends State<CommunityPage> {
       builder: (context, provider, child) {
         return Container(
           height: 32,
-          color: Colors.white,
+          // color: Colors.white,
           padding: const EdgeInsets.only(top: 4),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -129,7 +129,7 @@ class _CommunityPageState extends State<CommunityPage> {
               final isSelected = provider.currentClassifyId == subCategory.id;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 3),
-                child: InkWell(
+                child: GestureDetector(
                   onTap: () {
                     provider.setCurrentClassify(subCategory.id);
                     if (mounted) {
@@ -142,13 +142,13 @@ class _CommunityPageState extends State<CommunityPage> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.blue[700] : Colors.grey[100],
+                      color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Text(
                       subCategory.title,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.grey[800],
+                        color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 13,
                         fontWeight:
                             isSelected ? FontWeight.w500 : FontWeight.normal,
@@ -184,20 +184,17 @@ class _CommunityPageState extends State<CommunityPage> {
               snap: true,
               toolbarHeight: 0,
               expandedHeight: 160,
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.background,
               flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  color: Colors.white,
-                  child: SafeArea(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _buildHeader(),
-                        _buildSearchBar(),
-                        _buildCategoryTabs(),
-                        const SizedBox(height: 4),
-                      ],
-                    ),
+                background: SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildHeader(),
+                      _buildSearchBar(),
+                      _buildCategoryTabs(),
+                      const SizedBox(height: 4),
+                    ],
                   ),
                 ),
               ),

@@ -48,11 +48,10 @@ class _NotificationPageState extends State<NotificationPage> with SingleTickerPr
   Widget _buildNotificationItem(NotificationModel notification) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: Color.fromARGB(255, 230, 230, 230),
+            color: Theme.of(context).colorScheme.surfaceVariant,
             width: 0.5,
           ),
         ),
@@ -79,7 +78,7 @@ class _NotificationPageState extends State<NotificationPage> with SingleTickerPr
                   notification.content,
                   style: TextStyle(
                     fontSize: 16,
-                    color: notification.state ? Colors.grey[600] : Colors.black,
+                    color: notification.state ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -87,7 +86,7 @@ class _NotificationPageState extends State<NotificationPage> with SingleTickerPr
                   _formatTime(notification.createdAt),
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[500],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -116,11 +115,11 @@ class _NotificationPageState extends State<NotificationPage> with SingleTickerPr
 
   Widget _buildNotificationList(List<NotificationModel> notifications) {
     if (notifications.isEmpty) {
-      return const Center(
+      return  Center(
         child: Text(
           '暂无消息',
           style: TextStyle(
-            color: Colors.grey,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 16,
           ),
         ),
@@ -145,16 +144,12 @@ class _NotificationPageState extends State<NotificationPage> with SingleTickerPr
     return Scaffold(
       appBar: AppBar(
         title: const Text('消息中心'),
-        backgroundColor: Colors.white,
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
             Tab(text: '通知'),
             Tab(text: '@我'),
           ],
-          labelColor: Colors.blue,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: Colors.blue,
         ),
       ),
       body: Consumer<NotificationProvider>(

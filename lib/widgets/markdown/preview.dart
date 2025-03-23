@@ -133,38 +133,52 @@ class HighMarkdownPrevie extends StatelessWidget {
       },
       imageBuilder: (uri, title, alt) {
         final imageUrl = ApiBase.getUrlNoRequest(uri.toString());
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        
         return GestureDetector(
           onTap: () => _showImageDialog(context, imageUrl),
           child: Hero(
             tag: imageUrl,
-            child: Image.network(
-              imageUrl,
-              headers: Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 150,
-                  color: Colors.grey[200],
-                  child: const Center(
-                    child: Icon(
-                      Icons.error_outline,
-                      color: Colors.grey,
-                      size: 30,
+            child: Stack(
+              children: [
+                Image.network(
+                  imageUrl,
+                  headers: Map.from({ApiBase.AuthorizationKey: ApiBase.token}),
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 150,
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      child: Center(
+                        child: Icon(
+                          Icons.error_outline,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          size: 30,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                if (isDark)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                      ),
                     ),
                   ),
-                );
-              },
+              ],
             ),
           ),
         );

@@ -59,8 +59,7 @@ class _CommentsPageState extends State<CommentsPage> {
         bottom: MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey[200]!)),
+        border: Border(top: BorderSide(color: Theme.of(context).colorScheme.surfaceVariant)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -93,7 +92,7 @@ class _CommentsPageState extends State<CommentsPage> {
                 child: Container(
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.onSurface,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextField(
@@ -138,9 +137,9 @@ class _CommentsPageState extends State<CommentsPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Consumer<CommentProvider>(
         builder: (context, provider, child) {

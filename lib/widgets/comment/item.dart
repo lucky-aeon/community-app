@@ -43,11 +43,11 @@ class CommentItem extends StatelessWidget {
     context.read<CommentProvider>().setReplyTo(comment);
   }
 
-  Widget _buildAvatar() {
+  Widget _buildAvatar(BuildContext context) {
     if (avatarUrl.isEmpty) {
       return CircleAvatar(
         radius: 20,
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
         child: const Icon(
           Icons.person,
           size: 24,
@@ -58,7 +58,7 @@ class CommentItem extends StatelessWidget {
 
     return CircleAvatar(
       radius: 20,
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       child: ClipOval(
         child: Image.network(
           ApiBase.getUrlByQueryToken(avatarUrl),
@@ -96,7 +96,7 @@ class CommentItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildAvatar(),
+                _buildAvatar(context),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -199,7 +199,7 @@ class CommentItem extends StatelessWidget {
           Divider(
             height: 1,
             thickness: 0.5,
-            color: Colors.grey[200],
+            color: Theme.of(context).colorScheme.surfaceVariant,
           ),
         ],
       ),
@@ -237,7 +237,7 @@ class ReplyComment extends StatelessWidget {
       margin: const EdgeInsets.only(top: 4),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(

@@ -93,7 +93,6 @@ class _ArticleDetailPageState extends State<ArticleDetailPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
         body: CustomScrollView(
           controller: _scrollController, // 添加滚动控制器
           slivers: [

@@ -8,6 +8,8 @@ import 'package:lucky_community/provider/user.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/provider/auth.dart';
 import 'package:lucky_community/provider/notification.dart';
+import 'package:lucky_community/provider/theme_provider.dart';
+import 'package:lucky_community/theme/app_theme.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -21,29 +23,29 @@ void main() {
       ChangeNotifierProvider(create: (_) => CommunityProvider()),
       ChangeNotifierProvider(create: (_) => CommentProvider()),
       ChangeNotifierProvider(create: (_) => NotificationProvider()),
+      ChangeNotifierProvider(create: (_) => ThemeProvider()),
     ],
-    child: const MainApp(),
+    child: const MyApp(),
   ));
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: navigatorKey,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        primaryColor: Colors.blue,
-        primarySwatch: Colors.blue,
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey,
-        ),
-      ),
-      home: const HelloPage(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          navigatorKey: navigatorKey,
+          title: 'Lucky Community',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
+          home: const HelloPage(),
+        );
+      },
     );
   }
 }
