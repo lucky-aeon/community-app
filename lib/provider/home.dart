@@ -28,4 +28,14 @@ class HomeProvider extends ChangeNotifier {
     _courses.addAll(courses);
     notifyListeners();
   }
+
+  getCourseList() async {
+    Map<String, dynamic> courses = await Api.getCourse().getCourseList();
+    if (!courses['ok']) {
+      return;
+    }
+    _courses.clear();
+    _courses.addAll(List<Course>.from(courses['data'].map((item) => Course.fromJson(item))));
+    notifyListeners();
+  }
 }

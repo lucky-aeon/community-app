@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucky_community/model/user.dart';
+import 'package:lucky_community/provider/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/provider/user.dart';
 
@@ -12,11 +13,13 @@ class AppSettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<AppSettingPage> {
   late UserProvider _userProvider;
+  late ThemeProvider _themeProvider;
 
   @override
   void initState() {
     super.initState();
     _userProvider = Provider.of<UserProvider>(context, listen: false);
+    _themeProvider = Provider.of<ThemeProvider>(context, listen: false);
   }
 
   // 显示修改昵称对话框
@@ -315,6 +318,7 @@ class _SettingPageState extends State<AppSettingPage> {
           trailing: trailing,
           onTap: onTap,
         ),
+        
         const Divider(height: 0.01, color: Color.fromARGB(255, 230, 230, 230),),
       ],
     );
@@ -326,7 +330,6 @@ class _SettingPageState extends State<AppSettingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),
-        backgroundColor: Colors.white,  
       ),
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
@@ -362,6 +365,20 @@ class _SettingPageState extends State<AppSettingPage> {
                 title: '修改密码',
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
                 onTap: _handlePasswordChange,
+              ),
+              _buildSettingItem(
+                icon: _themeProvider.themeMode == ThemeMode.dark ? Icons.dark_mode : Icons.light_mode,
+                title: '深色模式',
+                trailing: Switch(
+                  value: _themeProvider.themeMode == ThemeMode.dark,
+                  onChanged: (value) {
+                    setState(() {
+                      _themeProvider.setThemeMode(
+                        value ? ThemeMode.dark : ThemeMode.light,
+                      );
+                    });
+                  },
+                ),
               ),
             ],
           );
