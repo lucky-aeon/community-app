@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucky_community/model/user.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/provider/user.dart';
 
@@ -11,7 +12,6 @@ class AppSettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<AppSettingPage> {
   late UserProvider _userProvider;
-  bool notificationEnabled = true;
 
   @override
   void initState() {
@@ -29,20 +29,42 @@ class _SettingPageState extends State<AppSettingPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('修改昵称'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            '修改昵称',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(
               hintText: '请输入新昵称',
-              border: OutlineInputBorder(),
+              hintStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                borderSide: BorderSide(color: Colors.blue, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
             autofocus: true,
             maxLength: 20,
+            style: const TextStyle(fontSize: 16),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
+              child: const Text(
+                '取消',
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -51,7 +73,120 @@ class _SettingPageState extends State<AppSettingPage> {
                   Navigator.of(context).pop(newNickname);
                 }
               },
-              child: const Text('确定'),
+              child: const Text(
+                '确定',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 显示修改密码对话框
+  Future<ChangePassword?> _showPasswordDialog() async {
+    final TextEditingController oldPasswordController = TextEditingController(
+      text: "",
+    );
+    final TextEditingController newPasswordController = TextEditingController(
+      text: "",
+    );
+    final TextEditingController confirmPasswordController = TextEditingController(
+      text: "",
+    );
+
+    return showDialog<ChangePassword>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            '修改密码',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: SizedBox(
+              width: double.maxFinite,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: oldPasswordController,
+                    decoration: const InputDecoration(
+                      hintText: '请输入旧密码',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    obscureText: true,
+                    autofocus: true,
+                    maxLength: 20,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: newPasswordController,
+                    decoration: const InputDecoration(
+                      hintText: '请输入新密码',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    obscureText: true,
+                    maxLength: 20,
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: confirmPasswordController,
+                    decoration: const InputDecoration(
+                      hintText: '请确认新密码',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    ),
+                    obscureText: true,
+                    maxLength: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null),
+              child: const Text(
+                '取消',
+                style: TextStyle(color: Colors.grey),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                final oldPassword = oldPasswordController.text.trim();
+                final newPassword = newPasswordController.text.trim();
+                final confirmPassword = confirmPasswordController.text.trim();
+                if (oldPassword.isNotEmpty && newPassword.isNotEmpty && confirmPassword.isNotEmpty) {
+                  Navigator.of(context).pop(ChangePassword(oldPassword: oldPassword, newPassword: newPassword, confirmPassword: confirmPassword));
+                }
+              },
+              child: const Text(
+                '确定',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         );
@@ -64,9 +199,33 @@ class _SettingPageState extends State<AppSettingPage> {
     showDialog(
       context: context,
       barrierDismissible: false,
+      barrierColor: Colors.transparent,
       builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
+        return Center(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 2,
+                ),
+                SizedBox(height: 12),
+                Text(
+                  '加载中...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
@@ -92,26 +251,53 @@ class _SettingPageState extends State<AppSettingPage> {
       try {
         _showLoadingDialog();
         await _userProvider.updateNickname(result);
-        navi.pop(); // 关闭加载对话框
         _showMessage('昵称修改成功');
       } catch (e) {
-        navi.pop(); // 关闭加载对话框
         _showMessage('修改失败：${e.toString()}', isError: true);
+      } finally {
+        navi.pop(); // 关闭加载对话框
       }
     }
   }
 
   // 处理通知开关
   Future<void> _handleNotificationToggle(bool value) async {
-    setState(() {
-      notificationEnabled = value;
-    });
-    // TODO: 实现保存通知设置的逻辑
+    if (!mounted) return;
+     final navi = Navigator.of(context);  // 保存 Navigator 引用
+    try {
+      _showLoadingDialog();
+      await _userProvider.toggleSubscribe();
+      _showMessage('订阅成功');
+    } catch (e) {
+      _showMessage('订阅失败：${e.toString()}', isError: true);
+    } finally {
+      navi.pop(); // 关闭加载对话框
+    }
   }
 
   // 处理密码修改
-  void _handlePasswordChange() {
-    // TODO: 实现密码修改页面导航
+  Future<void> _handlePasswordChange() async {
+    final result = await _showPasswordDialog();
+    if (!mounted) return;
+    if (result == null) {
+      return;
+    }
+
+    if (!result.validate()) {
+      _showMessage('请检查密码是否正确', isError: true);
+      return;
+    }
+
+    final navi = Navigator.of(context);  // 保存 Navigator 引用
+    try {
+      _showLoadingDialog();
+      await _userProvider.updatePassword(result);
+      navi.pop();  // 关闭 loading 对话框
+      _showMessage('密码修改成功');
+    } catch (e) {
+      navi.pop();  // 关闭 loading 对话框
+      _showMessage('密码修改失败：${e.toString()}', isError: true);
+    }
   }
 
   // 构建设置项
@@ -136,6 +322,7 @@ class _SettingPageState extends State<AppSettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('userinfo subscribe: ${_userProvider.userInfo?.subscribe}');
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),
@@ -164,8 +351,10 @@ class _SettingPageState extends State<AppSettingPage> {
                 icon: Icons.notifications_outlined,
                 title: '订阅App消息',
                 trailing: Switch(
-                  value: notificationEnabled,
-                  onChanged: _handleNotificationToggle,
+                  value: userProvider.userInfo?.subscribe == 1,
+                  onChanged: (value) {
+                    _handleNotificationToggle(value);
+                  },
                 ),
               ),
               _buildSettingItem(

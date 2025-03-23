@@ -20,17 +20,71 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  bool isLogin() {
+    return _userInfo != null;
+  }
+
   Future<void> updateNickname(String newNickname) async {
+    if (!isLogin()) {
+      debugPrint('User info is null');
+      throw Exception('用户信息为空');
+    }
+    if (newNickname == _userInfo!.name) {
+      return;
+    }
     try {
-      // var result = await UserApi.updateUserInfo(nickname: newNickname);
-      // if (result.success) {
-      //   // 更新成功后重新获取用户信息
-      //   await fetchUserInfo();
-      // } else {
-      //   throw Exception(result.message ?? '更新失败');
-      // }
+      var result = await UserApi.updateUserInfo(name: newNickname);
+      if (result.success) {
+        _userInfo!.name = newNickname;
+        notifyListeners();
+      } else {
+        throw Exception(result.message);
+      }
     } catch (e) {
       debugPrint('Error updating nickname: $e');
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<int> toggleSubscribe() async {
+    if (!isLogin()) {
+      debugPrint('User info is null');
+      throw Exception('用户信息为空');
+    }
+    try {
+      var newSub = _userInfo!.subscribe == 1 ? 0 : 1;
+      var result = await UserApi.updateUserInfo(subscribe: newSub, name: _userInfo!.name);
+      if (result.success) {
+        _userInfo!.subscribe = newSub;
+        notifyListeners();
+        return newSub;
+      } else {
+        throw Exception(result.message);
+      }
+    } catch (e) {
+      debugPrint('Error toggling subscribe: $e');
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> updatePassword(ChangePassword body) async {
+    if (!isLogin()) {
+      debugPrint('User info is null');
+      throw Exception('用户信息为空');
+    }
+    if (!body.validate()) {
+      throw Exception('密码格式不正确');
+    }
+    try {
+      var result = await UserApi.changePassword(body);
+      if (result.success) {
+        return;
+      } else {
+        debugPrint('Error updating password: ${result.message}');
+        throw Exception(result.message);
+      }
+    } catch (e) {
+      debugPrint('Error updating password: $e');
       throw Exception(e.toString());
     }
   }

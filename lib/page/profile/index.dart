@@ -5,6 +5,8 @@ import 'package:lucky_community/provider/auth.dart';
 import 'package:lucky_community/provider/user.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/api/base.dart';
+import 'package:lucky_community/page/profile/notification.dart';
+import 'package:lucky_community/provider/notification.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,6 +21,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     _authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // 获取未读消息数量
+    Provider.of<NotificationProvider>(context, listen: false).fetchUnreadCount();
   }
   @override
   Widget build(BuildContext context) {
@@ -50,10 +54,59 @@ class _ProfilePageState extends State<ProfilePage> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                IconButton(
-                                  icon:
-                                      const Icon(Icons.notifications_outlined),
-                                  onPressed: () {},
+                                Consumer<NotificationProvider>(
+                                  builder: (context, notificationProvider, child) {
+                                    return Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(50),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => const NotificationPage(),
+                                            ),
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          width: 48,
+                                          height: 48,
+                                          child: Stack(
+                                            children: [
+                                              const IconButton(
+                                                icon: Icon(Icons.notifications_outlined),
+                                                onPressed: null,
+                                              ),
+                                              if (notificationProvider.unreadCount > 0)
+                                                Positioned(
+                                                  right: 8,
+                                                  top: 8,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.all(4),
+                                                    decoration: const BoxDecoration(
+                                                      color: Colors.red,
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    constraints: const BoxConstraints(
+                                                      minWidth: 16,
+                                                      minHeight: 16,
+                                                    ),
+                                                    child: Text(
+                                                      notificationProvider.unreadCount.toString(),
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 10,
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),

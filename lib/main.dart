@@ -7,6 +7,7 @@ import 'package:lucky_community/provider/home.dart';
 import 'package:lucky_community/provider/user.dart';
 import 'package:provider/provider.dart';
 import 'package:lucky_community/provider/auth.dart';
+import 'package:lucky_community/provider/notification.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -19,6 +20,7 @@ void main() {
       ChangeNotifierProvider(create: (_) => ArticleProvider()),
       ChangeNotifierProvider(create: (_) => CommunityProvider()),
       ChangeNotifierProvider(create: (_) => CommentProvider()),
+      ChangeNotifierProvider(create: (_) => NotificationProvider()),
     ],
     child: const MainApp(),
   ));
