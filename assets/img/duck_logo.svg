@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- 背景圆 -->
+    <circle cx="256" cy="256" r="240" fill="#E3F2FD"/>
+    
+    <!-- 笔记本电脑 -->
+    <path d="M146 290h220v100H146z" fill="#424242"/>
+    <path d="M126 390h260v25H126z" fill="#616161"/>
+    <path d="M146 290h220v20H146z" fill="#2196F3"/>
+    
+    <!-- 代码符号 -->
+    <path d="M176 320l-20 20 20 20M226 320l20 20-20 20" fill="none" stroke="#4FC3F7" stroke-width="6"/>
+    <path d="M196 315l15 45" stroke="#4FC3F7" stroke-width="6"/>
+    
+    <!-- 鸭子身体 -->
+    <ellipse cx="256" cy="230" rx="100" ry="90" fill="#FFE082"/>
+    <path d="M176 280c0-20 35-40 80-40s80 20 80 40" fill="#FFE082"/>
+    
+    <!-- 鸭子头 -->
+    <circle cx="256" cy="180" r="60" fill="#FFE082"/>
+    
+    <!-- 鸭子眼睛 -->
+    <g transform="translate(256 180)">
+        <!-- 左眼 -->
+        <g transform="translate(-25 -10)">
+            <circle r="12" fill="white"/>
+            <circle r="6" fill="#212121"/>
+            <circle r="2" fill="white" transform="translate(2 -2)"/>
+        </g>
+        <!-- 右眼 -->
+        <g transform="translate(25 -10)">
+            <circle r="12" fill="white"/>
+            <circle r="6" fill="#212121"/>
+            <circle r="2" fill="white" transform="translate(2 -2)"/>
+        </g>
+    </g>
+    
+    <!-- 鸭子嘴 -->
+    <path d="M236 190h40v20a20 20 0 01-40 0v-20z" fill="#FF9800"/>
+    <path d="M236 190h40v8h-40z" fill="#FFA726"/>
+    
+    <!-- 鸭子翅膀 -->
+    <path d="M176 220c-10 0-30 10-30 30s20 30 30 30" fill="#FFD54F"/>
+    <path d="M336 220c10 0 30 10 30 30s-20 30-30 30" fill="#FFD54F"/>
+    
+    <!-- 程序员眼镜 -->
+    <g transform="translate(256 170)">
+        <path d="M-35 0h70" stroke="#424242" stroke-width="3"/>
+        <circle cx="-25" cy="0" r="15" stroke="#424242" stroke-width="3" fill="none"/>
+        <circle cx="25" cy="0" r="15" stroke="#424242" stroke-width="3" fill="none"/>
+    </g>
+    
+    <!-- 可爱的腮红 -->
+    <circle cx="206" cy="190" r="10" fill="#FFB74D" opacity="0.5"/>
+    <circle cx="306" cy="190" r="10" fill="#FFB74D" opacity="0.5"/>
+</svg> 
