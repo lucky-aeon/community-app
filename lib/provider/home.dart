@@ -8,10 +8,11 @@ import 'package:lucky_community/model/course.dart';
 class HomeProvider extends ChangeNotifier {
   final List<Article> _articles = [];
   final List<Course> _courses = [];
+  final List<Course> _coursesList = [];
 
   List<Article> get articles => _articles;
   List<Course> get courses => _courses;
-
+  List<Course> get coursesList => _coursesList;
   getLatestArticles() async {
     Result<List<Article>> articlesResult = await article_api.Article.getLatest();
     if (!articlesResult.success) {
@@ -34,8 +35,8 @@ class HomeProvider extends ChangeNotifier {
     if (!courses['ok']) {
       return;
     }
-    _courses.clear();
-    _courses.addAll(List<Course>.from(courses['data'].map((item) => Course.fromJson(item))));
+    _coursesList.clear();
+    _coursesList.addAll(List<Course>.from(courses['data']['list'].map((item) => Course.fromJson(item))));
     notifyListeners();
   }
 }
