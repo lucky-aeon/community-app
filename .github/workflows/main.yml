@@ -30,6 +30,19 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      # Extract version from tag
+      - name: Extract Version from Tag
+        id: version
+        run: |
+          # Remove 'v' prefix from tag (e.g., v1.2.3 -> 1.2.3)
+          VERSION=${GITHUB_REF#refs/tags/v}
+          # Split version into components
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          # Calculate build number (you might want to adjust this formula)
+          BUILD_NUMBER=$((MAJOR * 10000 + MINOR * 100 + PATCH))
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+
       # Check Android Secrets
       - name: Check Android Secrets
         id: check_android
@@ -72,11 +85,11 @@ jobs:
 
       - name: Build APK
         if: steps.check_android.outputs.has_android_secrets == 'true'
-        run: flutter build apk --release
+        run: flutter build apk --release --build-name=${{ steps.version.outputs.version }} --build-number=${{ steps.version.outputs.build_number }}
 
       - name: Build App Bundle
         if: steps.check_android.outputs.has_android_secrets == 'true'
-        run: flutter build appbundle
+        run: flutter build appbundle --build-name=${{ steps.version.outputs.version }} --build-number=${{ steps.version.outputs.build_number }}
 
       # iOS Setup and Build
       - name: Install Apple Certificate
